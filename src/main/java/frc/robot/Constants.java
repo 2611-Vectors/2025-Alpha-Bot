@@ -34,4 +34,7 @@ public final class Constants {
     /** Replaying from a log file. */
     REPLAY
   }
+
+  public static int LEFT_ELEVATOR_ID = 1;
+  public static int RIGHT_ELEVATOR_ID = 2;
 }
