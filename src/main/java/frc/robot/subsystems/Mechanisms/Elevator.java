@@ -5,16 +5,20 @@
 package frc.robot.subsystems.Mechanisms;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.PhoenixUtil;
+import frc.robot.util.TunablePIDController;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
   private TalonFX leftMotor;
   private TalonFX rightMotor;
+  TunablePIDController controllerPID;
+  private final PositionVoltage m_PositionVoltage = new PositionVoltage(0).withSlot(0);
 
   /** Creates a new Elevator. */
   public Elevator() {
@@ -27,6 +31,10 @@ public class Elevator extends SubsystemBase {
     // This method will be called once per scheduler run
     configMotors(leftMotor, false);
     configMotors(rightMotor, false);
+
+    controllerPID =
+        new TunablePIDController(
+            Constants.ELEVATOR_P, Constants.ELEVATOR_I, Constants.ELEVATOR_D, "/tunning/elevator");
   }
 
   public void configMotors(TalonFX motor, boolean inverted) {
@@ -70,8 +78,8 @@ public class Elevator extends SubsystemBase {
 
     // Add a simulator update
 
-    // leftMotor.setControl();
-    // rightMotor.setControl();
+    leftMotor.setControl(m_PositionVoltage.withPosition(leftPosition));
+    rightMotor.setControl(m_PositionVoltage.withPosition(rightPosition));
   }
 
   public double getLeftElevatorPosition() {
