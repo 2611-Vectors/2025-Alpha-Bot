@@ -72,21 +72,20 @@ public class Elevator extends SubsystemBase {
     rightMotor.setVoltage(voltage);
   }
 
-  public void setElevatorPosition(double leftPosition, double rightPosition) {
-    Logger.recordOutput("Elevator/Position", leftPosition);
-    Logger.recordOutput("Elevator/Position", rightPosition);
+  public void setElevatorPosition(double motorPosition) {
+    Logger.recordOutput("Elevator/Position", motorPosition);
 
     // Add a simulator update
 
-    leftMotor.setControl(m_PositionVoltage.withPosition(leftPosition));
-    rightMotor.setControl(m_PositionVoltage.withPosition(rightPosition));
+    leftMotor.setControl(m_PositionVoltage.withPosition(motorPosition));
+    rightMotor.setControl(m_PositionVoltage.withPosition(motorPosition));
   }
 
   public double getLeftElevatorPosition() {
-    return leftMotor.getPosition().getValueAsDouble();
+    return leftMotor.getPosition().getValueAsDouble() * Constants.ROTATIONS_TO_INCHES;
   }
 
   public double getRightElevatorPosition() {
-    return rightMotor.getPosition().getValueAsDouble();
+    return rightMotor.getPosition().getValueAsDouble() * Constants.ROTATIONS_TO_INCHES;
   }
 }
