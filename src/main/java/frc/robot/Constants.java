@@ -48,4 +48,7 @@ public final class Constants {
   // 4 is the gear ratio
   // 2 is the diamitor of the string housing
   public static double ROTATIONS_TO_INCHES = 4 * Math.PI * 2; 
+
+  public static final int INTAKE_MOTOR_ID = 0;
+  public static final int PIVOT_MOTOR_ID = 0;
 }
