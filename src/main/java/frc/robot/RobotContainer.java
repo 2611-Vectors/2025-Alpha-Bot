@@ -130,9 +130,8 @@ public class RobotContainer {
             () -> -controller.getRightX()));
 
     m_Intake.setDefaultCommand(
-        IntakeCommands.IntakeSimpleController(m_Intake, 
-            () -> operatorController.getLeftY(), 
-            () -> operatorController.getRightY()));
+        IntakeCommands.IntakeSimpleController(
+            m_Intake, () -> operatorController.getLeftY(), () -> operatorController.getRightY()));
 
     // Lock to 0° when A button is held
     controller
@@ -157,8 +156,6 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-    
-    
   }
 
   /**
