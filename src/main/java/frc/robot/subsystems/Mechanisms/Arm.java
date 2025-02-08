@@ -16,6 +16,8 @@ import org.littletonrobotics.junction.Logger;
 public class Arm extends SubsystemBase {
   private final TalonFX arm = new TalonFX(Constants.ARM_MOTOR_ID);
   DutyCycleEncoder pivotEncoder = new DutyCycleEncoder(Constants.ARM_PIVOT_PORT);
+  private int targetAngle;
+
   // PIDController ControllerPID
   public void setMotor() {
     // Motor Voltage and Speed
@@ -40,6 +42,14 @@ public class Arm extends SubsystemBase {
       correctedAngle %= 360;
     }
     return correctedAngle;
+  }
+
+  public void setTargetAngle(int tAngle) {
+    targetAngle = tAngle;
+  }
+
+  public void setPivotAngle() {
+    arm.setPosition(targetAngle);
   }
 
   @Override
