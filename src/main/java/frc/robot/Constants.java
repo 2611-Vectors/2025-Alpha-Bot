@@ -56,4 +56,11 @@ public final class Constants {
   public static final int ARM_MOTOR_ID = 0;
   public static final int ARM_PIVOT_PORT = 0;
   public static final int PIVOT_ANGLE_OFFSET = 0;
+
+  // Transition Code
+  public static final int TRANSITION_ID = 50;
+
+  public static double TransitionP = 0.0;
+  public static double TransitionI = 0.0;
+  public static double TransitionD = 0.0;
 }
