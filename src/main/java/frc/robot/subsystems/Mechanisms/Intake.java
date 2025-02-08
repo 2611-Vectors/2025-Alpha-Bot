@@ -6,15 +6,12 @@ package frc.robot.subsystems.Mechanisms;
 
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.PhoenixUtil;
-
 import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public class Intake extends SubsystemBase {
   private final TalonFX intake = new TalonFX(Constants.INTAKE_MOTOR_ID);
@@ -22,24 +19,24 @@ public class Intake extends SubsystemBase {
 
   private PIDController intakePivotPIDController = new PIDController(0.0, 0.0, 0.0);
   private ArmFeedforward intakePivotFeedforwardController = new ArmFeedforward(0.0, 0.0, 0.0);
-   
+
   private final PositionVoltage m_PositionVoltage = new PositionVoltage(0).withSlot(0);
 
   /** Creates a new Intake. */
   public Intake() {
-    PhoenixUtil.configMotors(intake, false, intakePivotPIDController, intakePivotFeedforwardController);
-    
+    PhoenixUtil.configMotors(
+        intake, false, intakePivotPIDController, intakePivotFeedforwardController);
   }
 
   public void setIntakeVoltage(double voltage) {
     intake.setVoltage(voltage);
   }
 
-  public void setPivotVoltage (double volatge) {
+  public void setPivotVoltage(double volatge) {
     pivot.setVoltage(volatge);
   }
 
-  public double getPivotPosition () {
+  public double getPivotPosition() {
     return pivot.getPosition().getValueAsDouble();
   }
 
@@ -53,7 +50,7 @@ public class Intake extends SubsystemBase {
     intakePivotPIDController.setD(d);
   }
 
-  public void extendIntake () {
+  public void extendIntake() {
     pivot.setControl(m_PositionVoltage.withPosition(10));
   }
 

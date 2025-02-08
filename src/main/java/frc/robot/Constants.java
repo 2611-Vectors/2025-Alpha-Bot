@@ -35,7 +35,7 @@ public final class Constants {
     REPLAY
   }
 
-  // elevator code
+  // Elevator Code
   // place holders
   public static int LEFT_ELEVATOR_ID = 41;
   public static int RIGHT_ELEVATOR_ID = 42;
@@ -44,11 +44,19 @@ public final class Constants {
   public static double ELEVATOR_I = 0;
   public static double ELEVATOR_D = 0;
 
-  // This equals the gear ratio of the elevator motor times pi times the diamitor of the string housing
+  // This equals the gear ratio of the elevator motor times pi times the diamitor of the string
+  // housing
   // 4 is the gear ratio
   // 2 is the diamitor of the string housing
-  public static double ROTATIONS_TO_INCHES = 4 * Math.PI * 2; 
+  public static double ROTATIONS_TO_INCHES = 4 * Math.PI * 2;
 
   public static final int INTAKE_MOTOR_ID = 0;
   public static final int PIVOT_MOTOR_ID = 0;
+
+  // Transition Code
+  public static final int TRANSITION_ID = 50;
+
+  public static double TransitionP = 0.0;
+  public static double TransitionI = 0.0;
+  public static double TransitionD = 0.0;
 }
