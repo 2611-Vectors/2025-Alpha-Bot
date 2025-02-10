@@ -41,7 +41,7 @@ public class Elevator extends SubsystemBase {
 
     controllerPID =
         new TunablePIDController(
-            Constants.ELEVATOR_P, Constants.ELEVATOR_I, Constants.ELEVATOR_D, "/tunning/elevator");
+            Constants.ELEVATOR_P, Constants.ELEVATOR_I, Constants.ELEVATOR_D, "/tunning/elevator/");
   }
 
   public void setPower(double power) {
