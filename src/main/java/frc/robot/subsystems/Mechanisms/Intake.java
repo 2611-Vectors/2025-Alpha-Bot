@@ -8,24 +8,41 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.PhoenixUtil;
+import frc.robot.util.TunablePIDController;
+
+import static edu.wpi.first.units.Units.RPM;
+
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public class Intake extends SubsystemBase {
   private final TalonFX intake = new TalonFX(Constants.INTAKE_MOTOR_ID);
   private final TalonFX pivot = new TalonFX(Constants.PIVOT_MOTOR_ID);
 
-  private PIDController intakePivotPIDController = new PIDController(0.0, 0.0, 0.0);
+  private TunablePIDController intakePIDController = new TunablePIDController(0.0, 0.0, 0.0, "/Intake/IntakePID/");
+  // Can not dynamiclly tune feed forward as far as we know
+  private SimpleMotorFeedforward intakeSimpleFFController = new SimpleMotorFeedforward(0.0, 0.0, 0.0);
+
+  private TunablePIDController intakePivotPIDController = new TunablePIDController(0.0, 0.0, 0.0, "/intakePivot/PivotPID/");
   private ArmFeedforward intakePivotFeedforwardController = new ArmFeedforward(0.0, 0.0, 0.0);
 
+  private double intakeRPM = 0.0;
+
   private final PositionVoltage m_PositionVoltage = new PositionVoltage(0).withSlot(0);
+
+  LoggedNetworkNumber currentIntakeRPM, currentIntakeVoltage;
 
   /** Creates a new Intake. */
   public Intake() {
     PhoenixUtil.configMotors(
         intake, false, intakePivotPIDController, intakePivotFeedforwardController);
+
+    currentIntakeRPM = new LoggedNetworkNumber("/Intake/IntakeRPM",0.0);
+    currentIntakeVoltage = new LoggedNetworkNumber("/Intake/IntakeVoltage",0.0);
   }
 
   public void setIntakeVoltage(double voltage) {
@@ -50,6 +67,20 @@ public class Intake extends SubsystemBase {
     intakePivotPIDController.setD(d);
   }
 
+  public void setIntakePID(double p, double i, double d) {
+    intakePIDController.setP(p);
+    intakePIDController.setI(i);
+    intakePIDController.setD(d);
+  }
+
+  public void setIntakeFF(double s, double v, double a){
+    intakeSimpleFFController = new SimpleMotorFeedforward(0.0, 0.0, 0.0);
+  }
+
+  public void setIntakeRPM(double rpm){
+    intakeRPM = rpm;
+  }
+
   public void extendIntake() {
     pivot.setControl(m_PositionVoltage.withPosition(10));
   }
@@ -58,5 +89,9 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     Logger.recordOutput("Intake/EncoderPosition", getPivotPosition());
+
+    intake.setVoltage(intakePIDController.calculate(intake.getVelocity().getValueAsDouble(), intakeRPM) + intakeSimpleFFController.calculate(intakeRPM));
+    currentIntakeRPM.set(intake.getVelocity().getValueAsDouble());
+    currentIntakeVoltage.set(intake.getMotorVoltage().getValueAsDouble());
   }
 }
