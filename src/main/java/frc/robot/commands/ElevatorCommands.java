@@ -44,11 +44,10 @@ public class ElevatorCommands {
         m_Elevator);
   }
 
-  public static Command ElevatorVoltageControl(Elevator m_Elevator) {
-    LoggedNetworkNumber elevatorVoltage = new LoggedNetworkNumber("/Elevator/ElevatorVoltage", 0.0);
+  public static Command ElevatorVoltageControl(Elevator m_Elevator, Supplier<Double> voltage) {
     return Commands.run(
         () -> {
-          m_Elevator.setVoltage(elevatorVoltage.get());
+          m_Elevator.setVoltage(voltage.get() * 4);
         },
         m_Elevator);
   }

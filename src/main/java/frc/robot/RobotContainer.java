@@ -23,9 +23,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.TransitionCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Mechanisms.Elevator;
 import frc.robot.subsystems.Mechanisms.Intake;
 import frc.robot.subsystems.Mechanisms.Transition;
 import frc.robot.subsystems.drive.Drive;
@@ -47,6 +49,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Intake m_Intake;
   private final Transition m_Transition;
+  private final Elevator m_Elevator;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -94,6 +97,7 @@ public class RobotContainer {
 
     m_Intake = new Intake();
     m_Transition = new Transition();
+    m_Elevator = new Elevator();
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -133,12 +137,16 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    m_Intake.setDefaultCommand(
-        IntakeCommands.IntakeSimpleController(
-            m_Intake, () -> operatorController.getLeftY(), () -> 0.0));
-    m_Transition.setDefaultCommand(
-        TransitionCommands.SimpleTransitionController(
-            m_Transition, () -> operatorController.getRightY()));
+    // m_Intake.setDefaultCommand(
+    //     IntakeCommands.IntakeSimpleController(
+    //         m_Intake, () -> operatorController.getLeftY(), () -> 0.0));
+    // m_Transition.setDefaultCommand(
+    //     TransitionCommands.SimpleTransitionController(
+    //         m_Transition, () -> operatorController.getRightY()));
+
+    m_Elevator.setDefaultCommand(
+        ElevatorCommands.ElevatorVoltageControl(
+            m_Elevator, () -> operatorController.getLeftY()));
 
     // Lock to 0° when A button is held
     controller
@@ -163,6 +171,8 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+
   }
 
   /**
