@@ -51,4 +51,13 @@ public class ElevatorCommands {
         },
         m_Elevator);
   }
+
+  public static Command ElevatorFFTuner(Elevator m_Elevator) {
+    LoggedNetworkNumber voltage = new LoggedNetworkNumber("/Elevator/Voltage", 0.0);
+    return Commands.run(
+        () -> {
+          m_Elevator.setVoltage(voltage.get());
+        },
+        m_Elevator);
+  }
 }

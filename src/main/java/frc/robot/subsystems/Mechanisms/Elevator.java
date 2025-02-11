@@ -25,23 +25,12 @@ public class Elevator extends SubsystemBase {
     leftMotor = new TalonFX(Constants.LEFT_ELEVATOR_ID);
     rightMotor = new TalonFX(Constants.RIGHT_ELEVATOR_ID);
 
-    PhoenixUtil.configMotors(leftMotor, false, controllerPID, new ArmFeedforward(0.0, 0.0, 0.0));
-    PhoenixUtil.configMotors(rightMotor, true, controllerPID, new ArmFeedforward(0.0, 0.0, 0.0));
-  }
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    if (controllerPID.getP() != oldP
-        || controllerPID.getI() != oldI
-        || controllerPID.getD() != oldD) {
-      PhoenixUtil.configMotors(leftMotor, false, controllerPID, new ArmFeedforward(0.0, 0.0, 0.0));
-      PhoenixUtil.configMotors(rightMotor, true, controllerPID, new ArmFeedforward(0.0, 0.0, 0.0));
-    }
-
     controllerPID =
         new TunablePIDController(
             Constants.ELEVATOR_P, Constants.ELEVATOR_I, Constants.ELEVATOR_D, "/tunning/elevator/");
+
+    PhoenixUtil.configMotors(leftMotor, false, controllerPID, new ArmFeedforward(0.0, 0.0, 0.0));
+    PhoenixUtil.configMotors(rightMotor, true, controllerPID, new ArmFeedforward(0.0, 0.0, 0.0));
   }
 
   public void setPower(double power) {
@@ -69,5 +58,17 @@ public class Elevator extends SubsystemBase {
 
   public double getRightElevatorPosition() {
     return rightMotor.getPosition().getValueAsDouble() * Constants.ROTATIONS_TO_INCHES;
+  }
+
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+    if (controllerPID.getP() != oldP
+        || controllerPID.getI() != oldI
+        || controllerPID.getD() != oldD) {
+      // only need to tune ks
+      PhoenixUtil.configMotors(leftMotor, false, controllerPID, new ArmFeedforward(0.0, 0.0, 0.0));
+      PhoenixUtil.configMotors(rightMotor, true, controllerPID, new ArmFeedforward(0.0, 0.0, 0.0));
+    }
   }
 }

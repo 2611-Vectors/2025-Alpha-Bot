@@ -37,8 +37,8 @@ public final class Constants {
 
   // elevator code
   // place holders
-  public static int LEFT_ELEVATOR_ID = 41;
-  public static int RIGHT_ELEVATOR_ID = 42;
+  public static int LEFT_ELEVATOR_ID = 40;
+  public static int RIGHT_ELEVATOR_ID = 41;
 
   public static double ELEVATOR_P = 0;
   public static double ELEVATOR_I = 0;

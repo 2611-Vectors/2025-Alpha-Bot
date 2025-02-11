@@ -4,16 +4,14 @@
 
 package frc.robot.subsystems.Mechanisms;
 
-import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
-
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.TunablePIDController;
+import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 // Feed
 public class Transition extends SubsystemBase {
@@ -24,15 +22,15 @@ public class Transition extends SubsystemBase {
   private double transitionRPM = 0.0;
 
   private SimpleMotorFeedforward transitionSimpleFFController;
-  
+
   LoggedNetworkNumber currentTransitionRPM, currentTransitionVoltage;
 
   /** Creates a new Transition. */
   public Transition() {
     transitionMotor = new SparkFlex(Constants.TRANSITION_ID, MotorType.kBrushless);
     transitionSimpleFFController = new SimpleMotorFeedforward(0.0, 0.0, 0.0);
-    currentTransitionRPM = new LoggedNetworkNumber("/Intake/TransitionRPM",0.0);
-    currentTransitionVoltage = new LoggedNetworkNumber("/Intake/TransitionVoltage",0.0);
+    currentTransitionRPM = new LoggedNetworkNumber("/Intake/TransitionRPM", 0.0);
+    currentTransitionVoltage = new LoggedNetworkNumber("/Intake/TransitionVoltage", 0.0);
 
     controllerPID =
         new TunablePIDController(
@@ -50,16 +48,20 @@ public class Transition extends SubsystemBase {
     transitionMotor.setVoltage(voltage);
   }
 
-  public void setTransitionRPM(double rpm){
+  public void setTransitionRPM(double rpm) {
     transitionRPM = rpm;
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    transitionMotor.setVoltage(controllerPID.calculate(transitionMotor.getEncoder().getVelocity(), transitionRPM) + transitionSimpleFFController.calculate(transitionRPM));
+    transitionMotor.setVoltage(
+        controllerPID.calculate(transitionMotor.getEncoder().getVelocity(), transitionRPM)
+            + transitionSimpleFFController.calculate(transitionRPM));
     currentTransitionRPM.set(transitionMotor.getEncoder().getVelocity());
-    // transitionMotor.getBusVoltage() * transitionMotor.getAppliedOutput() should output applied voltage
-    currentTransitionVoltage.set(transitionMotor.getBusVoltage() * transitionMotor.getAppliedOutput());
+    // transitionMotor.getBusVoltage() * transitionMotor.getAppliedOutput() should output applied
+    // voltage
+    currentTransitionVoltage.set(
+        transitionMotor.getBusVoltage() * transitionMotor.getAppliedOutput());
   }
 }
