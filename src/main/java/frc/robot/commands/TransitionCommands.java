@@ -27,7 +27,7 @@ public class TransitionCommands {
 
     return Commands.run(
         () -> {
-          m_transition.setVoltage(transitionSupplier.get());
+          m_transition.setVoltage(transitionSupplier.get() * 8);
         },
         m_transition);
   }

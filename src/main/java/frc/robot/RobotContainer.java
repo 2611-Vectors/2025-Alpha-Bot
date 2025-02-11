@@ -24,8 +24,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeCommands;
+import frc.robot.commands.TransitionCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Mechanisms.Intake;
+import frc.robot.subsystems.Mechanisms.Transition;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -44,10 +46,11 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Intake m_Intake;
+  private final Transition m_Transition;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
-  private final CommandXboxController operatorController = new CommandXboxController(0);
+  private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -90,6 +93,7 @@ public class RobotContainer {
     }
 
     m_Intake = new Intake();
+    m_Transition = new Transition();
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -131,7 +135,10 @@ public class RobotContainer {
 
     m_Intake.setDefaultCommand(
         IntakeCommands.IntakeSimpleController(
-            m_Intake, () -> operatorController.getLeftY(), () -> operatorController.getRightY()));
+            m_Intake, () -> operatorController.getLeftY(), () -> 0.0));
+    m_Transition.setDefaultCommand(
+        TransitionCommands.SimpleTransitionController(
+            m_Transition, () -> operatorController.getRightY()));
 
     // Lock to 0° when A button is held
     controller
@@ -146,9 +153,9 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // Reset gyro to 0° when B button is pressed
+    // Reset gyro to 0° when Back button is pressed
     controller
-        .b()
+        .back()
         .onTrue(
             Commands.runOnce(
                     () ->

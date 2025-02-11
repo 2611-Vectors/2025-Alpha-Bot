@@ -50,15 +50,16 @@ public final class Constants {
   // 2 is the diamitor of the string housing
   public static double ROTATIONS_TO_INCHES = 4 * Math.PI * 2;
 
-  public static final int INTAKE_MOTOR_ID = 0;
-  public static final int PIVOT_MOTOR_ID = 0;
+  // Transition Code
+  public static final int TRANSITION_ID = 31;
+
+  // Intake Code
+  public static final int INTAKE_MOTOR_ID = 33;
+  public static final int PIVOT_MOTOR_ID = 32;
 
   public static final int ARM_MOTOR_ID = 0;
   public static final int ARM_PIVOT_PORT = 0;
   public static final int PIVOT_ANGLE_OFFSET = 0;
-
-  // Transition Code
-  public static final int TRANSITION_ID = 50;
 
   public static double TransitionP = 0.0;
   public static double TransitionI = 0.0;
