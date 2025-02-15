@@ -138,14 +138,14 @@ public class RobotContainer {
     //         () -> -controller.getRightX()));
 
     m_Intake.setDefaultCommand(
-        IntakeCommands.IntakeRPMTestCommands(
+        IntakeCommands.IntakeRPSTestCommands(
             m_Intake)); // , () -> operatorController.getLeftY(), () -> 0.0));
     // m_Intake.setDefaultCommand(
     //     IntakeCommands.IntakeSimpleController(
     //         m_Intake, () -> operatorController.getLeftY(), () ->
     // operatorController.getRightY()));
     m_Transition.setDefaultCommand(
-        TransitionCommands.TransitionRPMTestCommand(
+        TransitionCommands.TransitionRPSTestCommand(
             m_Transition)); // , () -> operatorController.getRightY()));
 
     m_Elevator.setDefaultCommand(

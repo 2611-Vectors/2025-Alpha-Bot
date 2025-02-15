@@ -29,7 +29,7 @@ public class Intake extends SubsystemBase {
       new TunablePIDController(0.0, 0.0, 0.0, "/intakePivot/PivotPID/");
   private ArmFeedforward intakePivotFeedforwardController = new ArmFeedforward(0.0, 0.0, 0.0);
 
-  private double intakeRPM = 0.0;
+  private double intakeRPS = 0.0;
 
   private final PositionVoltage m_PositionVoltage = new PositionVoltage(0).withSlot(0);
 
@@ -73,12 +73,12 @@ public class Intake extends SubsystemBase {
     intakeSimpleFFController = new SimpleMotorFeedforward(s, v, a);
   }
 
-  public void setIntakeRPM(double rpm) {
-    Logger.recordOutput("Intake/TargetVelocity", rpm);
+  public void setIntakeRPS(double RPS) {
+    Logger.recordOutput("Intake/TargetVelocity", RPS);
     intake.setVoltage(
-        intakePIDController.calculate(intake.getVelocity().getValueAsDouble(), rpm)
+        intakePIDController.calculate(intake.getVelocity().getValueAsDouble(), RPS)
             + intakeSimpleFFController.calculateWithVelocities(
-                intake.getVelocity().getValueAsDouble(), rpm));
+                intake.getVelocity().getValueAsDouble(), RPS));
   }
 
   public void extendIntake() {
@@ -93,9 +93,9 @@ public class Intake extends SubsystemBase {
     Logger.recordOutput("Intake/PivotPosition", pivot.getPosition().getValueAsDouble());
     // intake.setVoltage(
     // intakePIDController.calculate(intake.getVelocity().getValueAsDouble(),
-    // intakeRPM)
-    // + intakeSimpleFFController.calculate(intakeRPM));
-    // currentIntakeRPM.set(intake.getVelocity().getValueAsDouble());
+    // intakeRPS)
+    // + intakeSimpleFFController.calculate(intakeRPS));
+    // currentIntakeRPS.set(intake.getVelocity().getValueAsDouble());
     // currentIntakeVoltage.set(intake.getMotorVoltage().getValueAsDouble());
   }
 }

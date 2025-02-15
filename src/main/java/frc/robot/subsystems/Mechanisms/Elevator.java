@@ -10,16 +10,16 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.PhoenixUtil;
-import frc.robot.util.TunablePIDController;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
   private TalonFX leftMotor;
   private TalonFX rightMotor;
-  TunablePIDController controllerPID;
+  PIDController controllerPID;
   ElevatorFeedforward feedforward = new ElevatorFeedforward(0.0, 0.45, 0.0);
   private final PositionVoltage m_PositionVoltage = new PositionVoltage(0).withSlot(0);
   private double oldP = 0.0, oldI = 0.0, oldD = 0.0;
@@ -30,8 +30,7 @@ public class Elevator extends SubsystemBase {
     rightMotor = new TalonFX(Constants.RIGHT_ELEVATOR_ID);
 
     controllerPID =
-        new TunablePIDController(
-            Constants.ELEVATOR_P, Constants.ELEVATOR_I, Constants.ELEVATOR_D, "/tunning/elevator/");
+        new PIDController(Constants.ELEVATOR_P, Constants.ELEVATOR_I, Constants.ELEVATOR_D);
 
     PhoenixUtil.configMotors(
         leftMotor, true, controllerPID, new ArmFeedforward(0.0, 0.0, 0.0), NeutralModeValue.Brake);
@@ -88,7 +87,6 @@ public class Elevator extends SubsystemBase {
     //   PhoenixUtil.configMotors(rightMotor, true, controllerPID, new ArmFeedforward(0.0, 0.0,
     // 0.0));
     // }
-    controllerPID.update();
     Logger.recordOutput("Elevator/LeftEncoder", getLeftElevatorPosition());
     Logger.recordOutput("Elevator/RightEncoder", getRightElevatorPosition());
   }

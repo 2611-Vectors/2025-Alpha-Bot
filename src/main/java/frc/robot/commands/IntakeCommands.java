@@ -25,12 +25,12 @@ public class IntakeCommands {
         m_intake);
   }
 
-  public static Command IntakeRPMTestCommands(Intake m_intake) {
-    LoggedNetworkNumber intakeRPM = new LoggedNetworkNumber("/Intake/IntakeRPM", 0.0);
+  public static Command IntakeRPSTestCommands(Intake m_intake) {
+    LoggedNetworkNumber intakeRPS = new LoggedNetworkNumber("/Testing/IntakeRPS", 0.0);
 
     return Commands.run(
         () -> {
-          m_intake.setIntakeRPM(intakeRPM.get());
+          m_intake.setIntakeRPS(intakeRPS.get());
         },
         m_intake);
   }

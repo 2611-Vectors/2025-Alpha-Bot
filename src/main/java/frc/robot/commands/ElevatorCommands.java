@@ -14,7 +14,7 @@ import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 public class ElevatorCommands {
   public static Command ElevatorTestCommand(Elevator m_Elevator) {
     LoggedNetworkNumber elevatorPosition =
-        new LoggedNetworkNumber("/Elevator/ElevatorPosition", 0.0);
+        new LoggedNetworkNumber("/Testing/ElevatorPosition", 0.0);
     return Commands.run(
         () -> {
           m_Elevator.setElevatorPosition(elevatorPosition.get());

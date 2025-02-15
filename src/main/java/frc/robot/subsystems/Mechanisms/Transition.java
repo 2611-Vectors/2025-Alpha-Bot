@@ -20,17 +20,17 @@ public class Transition extends SubsystemBase {
   private SparkFlex transitionMotor;
   TunablePIDController controllerPID;
 
-  private double transitionRPM = 0.0;
+  private double transitionRPS = 0.0;
 
   private SimpleMotorFeedforward transitionSimpleFFController;
 
-  LoggedNetworkNumber currentTransitionRPM, currentTransitionVoltage;
+  LoggedNetworkNumber currentTransitionRPS, currentTransitionVoltage;
 
   /** Creates a new Transition. */
   public Transition() {
     transitionMotor = new SparkFlex(Constants.TRANSITION_ID, MotorType.kBrushless);
     transitionSimpleFFController = new SimpleMotorFeedforward(0.45661, 0.11467, 0.0);
-    currentTransitionRPM = new LoggedNetworkNumber("/Intake/TransitionRPM", 0.0);
+    currentTransitionRPS = new LoggedNetworkNumber("/Intake/TransitionRPS", 0.0);
     currentTransitionVoltage = new LoggedNetworkNumber("/Intake/TransitionVoltage", 0.0);
 
     controllerPID =
@@ -49,26 +49,26 @@ public class Transition extends SubsystemBase {
     transitionMotor.setVoltage(voltage);
   }
 
-  public void setTransitionRPM(double rpm) {
-    Logger.recordOutput("/Transition/TargetVelocity", rpm);
+  public void setTransitionRPS(double RPS) {
+    Logger.recordOutput("/Transition/TargetVelocity", RPS);
     transitionMotor.setVoltage(
-        controllerPID.calculate(transitionMotor.getEncoder().getVelocity(), rpm)
+        controllerPID.calculate(transitionMotor.getEncoder().getVelocity(), RPS)
             + transitionSimpleFFController.calculateWithVelocities(
-                transitionMotor.getEncoder().getVelocity(), rpm));
+                transitionMotor.getEncoder().getVelocity(), RPS));
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     // transitionMotor.setVoltage(
-    //     controllerPID.calculate(transitionMotor.getEncoder().getVelocity(), transitionRPM)
-    //         + transitionSimpleFFController.calculate(transitionRPM));
-    // currentTransitionRPM.set(transitionMotor.getEncoder().getVelocity());
+    //     controllerPID.calculate(transitionMotor.getEncoder().getVelocity(), transitionRPS)
+    //         + transitionSimpleFFController.calculate(transitionRPS));
+    // currentTransitionRPS.set(transitionMotor.getEncoder().getVelocity());
     // // transitionMotor.getBusVoltage() * transitionMotor.getAppliedOutput() should output applied
     // // voltage
     // currentTransitionVoltage.set(
     //     transitionMotor.getBusVoltage() * transitionMotor.getAppliedOutput());
     Logger.recordOutput(
-        "Transition/VelocityRPM", transitionMotor.getEncoder().getVelocity() / 60.0);
+        "Transition/VelocityRPS", transitionMotor.getEncoder().getVelocity() / 60.0);
   }
 }

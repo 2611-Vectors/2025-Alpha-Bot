@@ -22,12 +22,11 @@ public class TransitionCommands {
         m_transition);
   }
 
-  public static Command TransitionRPMTestCommand(Transition m_transition) {
-    LoggedNetworkNumber transitionRPM =
-        new LoggedNetworkNumber("/Transition/TransitionVelocity/", 0.0);
+  public static Command TransitionRPSTestCommand(Transition m_transition) {
+    LoggedNetworkNumber transitionRPS = new LoggedNetworkNumber("/Testing/TransitionRPS/", 0.0);
     return Commands.run(
         () -> {
-          m_transition.setTransitionRPM(transitionRPM.get());
+          m_transition.setTransitionRPS(transitionRPS.get());
         },
         m_transition);
   }
