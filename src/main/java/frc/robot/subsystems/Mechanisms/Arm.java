@@ -21,7 +21,7 @@ public class Arm extends SubsystemBase {
   // PIDController ControllerPID
   public void setMotor() {
     // Motor Voltage and Speed
-    PhoenixUtil.configMotors(arm, false, new PIDController(0, 0, 0), new ArmFeedforward(0, 0, 0));
+    PhoenixUtil.configMotor(arm, false, new PIDController(0, 0, 0), new ArmFeedforward(0, 0, 0));
   }
 
   /** Creates a new Arm. */

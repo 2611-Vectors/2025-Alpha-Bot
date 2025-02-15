@@ -35,10 +35,10 @@ public class Intake extends SubsystemBase {
 
   /** Creates a new Intake. */
   public Intake() {
-    PhoenixUtil.configMotors(
+    PhoenixUtil.configMotor(
         intake, false, intakePivotPIDController, intakePivotFeedforwardController);
 
-    PhoenixUtil.configMotors(pivot, false, new PIDController(0, 0, 0), new ArmFeedforward(0, 0, 0));
+    PhoenixUtil.configMotor(pivot, false, new PIDController(0, 0, 0), new ArmFeedforward(0, 0, 0));
   }
 
   public void setIntakeVoltage(double voltage) {

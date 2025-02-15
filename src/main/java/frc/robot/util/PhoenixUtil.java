@@ -19,6 +19,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import java.util.function.Supplier;
 
@@ -31,7 +32,7 @@ public class PhoenixUtil {
     }
   }
 
-  public static void configMotors(
+  public static void configMotor(
       TalonFX motor, boolean inverted, PIDController pidController, ArmFeedforward feedforward) {
     TalonFXConfiguration configs = new TalonFXConfiguration();
     configs.Slot0.kP = pidController.getP(); // An error of 1 rotation results in 2.4 V output
@@ -58,11 +59,42 @@ public class PhoenixUtil {
     motor.setPosition(0);
   }
 
-  public static void configMotors(
+  public static void configMotor(
       TalonFX motor,
       boolean inverted,
       PIDController pidController,
       ArmFeedforward feedforward,
+      NeutralModeValue motorOutput) {
+    TalonFXConfiguration configs = new TalonFXConfiguration();
+    configs.Slot0.kP = pidController.getP(); // An error of 1 rotation results in 2.4 V output
+    configs.Slot0.kI = pidController.getI(); // No output for integrated error
+    configs.Slot0.kD = pidController.getD(); // A velocity of 1 rps results in 0.1 V output
+
+    configs.Slot0.kS =
+        feedforward.getKs(); // Baseline voltage required to overcome static forces like friction
+    configs.Slot0.kG = feedforward.getKg(); // Voltage to overcome gravity
+    configs.MotorOutput.Inverted =
+        inverted ? InvertedValue.CounterClockwise_Positive : InvertedValue.Clockwise_Positive;
+
+    // Peak output of 8 V
+    configs.Voltage.PeakForwardVoltage = 8;
+    configs.Voltage.PeakReverseVoltage = -8;
+
+    configs.CurrentLimits.StatorCurrentLimit = 60;
+    configs.CurrentLimits.StatorCurrentLimitEnable = true;
+
+    // Example on how you would do break mode / coast mode
+    configs.MotorOutput.NeutralMode = motorOutput;
+
+    PhoenixUtil.tryUntilOk(5, () -> motor.getConfigurator().apply(configs, 0.25));
+    motor.setPosition(0);
+  }
+
+  public static void configMotor(
+      TalonFX motor,
+      boolean inverted,
+      PIDController pidController,
+      ElevatorFeedforward feedforward,
       NeutralModeValue motorOutput) {
     TalonFXConfiguration configs = new TalonFXConfiguration();
     configs.Slot0.kP = pidController.getP(); // An error of 1 rotation results in 2.4 V output

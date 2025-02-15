@@ -35,8 +35,6 @@ public final class Constants {
     REPLAY
   }
 
-  // elevator code
-  // place holders
   public static int LEFT_ELEVATOR_ID = 40;
   public static int RIGHT_ELEVATOR_ID = 41;
 
@@ -44,11 +42,15 @@ public final class Constants {
   public static double ELEVATOR_I = 0.01;
   public static double ELEVATOR_D = 0;
 
-  // This equals the gear ratio of the elevator motor times pi times the diamitor of the string
-  // housing
-  // 4 is the gear ratio
-  // 2 is the diamitor of the string housing
-  public static double ROTATIONS_TO_INCHES = (Math.PI * 2.1702) / 4;
+  public static double ELEVATOR_MAX_VOLTAGE = 1.0; // Set this to 8 for competition
+
+  // Constants for the elevator motor system
+  public static final double ELEVATOR_GEAR_RATIO = 4.0;
+  public static final double STRING_HOUSING_DIAMETER = 2.1702;
+
+  // Conversion factor from motor rotations to inches of travel
+  public static final double ROTATIONS_TO_INCHES =
+      (Math.PI * STRING_HOUSING_DIAMETER) / ELEVATOR_GEAR_RATIO;
 
   // Transition Code
   public static final int TRANSITION_ID = 31;
@@ -61,7 +63,7 @@ public final class Constants {
   public static final int ARM_PIVOT_PORT = 0;
   public static final int PIVOT_ANGLE_OFFSET = 0;
 
-  public static double TransitionP = 0.0;
-  public static double TransitionI = 0.0;
-  public static double TransitionD = 0.0;
+  public static double TRANSITION_P = 0.0;
+  public static double TRANSITION_I = 0.0;
+  public static double TRANSITION_D = 0.0;
 }

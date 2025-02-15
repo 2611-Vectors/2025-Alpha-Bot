@@ -20,8 +20,6 @@ public class Transition extends SubsystemBase {
   private SparkFlex transitionMotor;
   TunablePIDController controllerPID;
 
-  private double transitionRPS = 0.0;
-
   private SimpleMotorFeedforward transitionSimpleFFController;
 
   LoggedNetworkNumber currentTransitionRPS, currentTransitionVoltage;
@@ -35,9 +33,9 @@ public class Transition extends SubsystemBase {
 
     controllerPID =
         new TunablePIDController(
-            Constants.TransitionP,
-            Constants.TransitionI,
-            Constants.TransitionD,
+            Constants.TRANSITION_P,
+            Constants.TRANSITION_I,
+            Constants.TRANSITION_D,
             "/Intake/TransitionPID/");
   }
 
