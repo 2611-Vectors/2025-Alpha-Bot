@@ -16,10 +16,21 @@ public class IntakeCommands {
   public static Command IntakeTestCommands(Intake m_intake) {
     LoggedNetworkNumber intakeVoltage = new LoggedNetworkNumber("/Intake/IntakeVoltage", 0.0);
     LoggedNetworkNumber pivotVoltage = new LoggedNetworkNumber("/Intake/PivotVoltage", 0.0);
+
     return Commands.run(
         () -> {
           m_intake.setIntakeVoltage(intakeVoltage.get());
           m_intake.setPivotVoltage(pivotVoltage.get());
+        },
+        m_intake);
+  }
+
+  public static Command IntakeRPMTestCommands(Intake m_intake) {
+    LoggedNetworkNumber intakeRPM = new LoggedNetworkNumber("/Intake/IntakeRPM", 0.0);
+
+    return Commands.run(
+        () -> {
+          m_intake.setIntakeRPM(intakeRPM.get());
         },
         m_intake);
   }

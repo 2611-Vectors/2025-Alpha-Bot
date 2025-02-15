@@ -14,10 +14,20 @@ import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 public class TransitionCommands {
   public static Command TransitionTestCommand(Transition m_transition) {
     LoggedNetworkNumber transitionVoltage =
-        new LoggedNetworkNumber("/transition/transitionVoltage/", 0.0);
+        new LoggedNetworkNumber("/Transition/transitionVoltage/", 0.0);
     return Commands.run(
         () -> {
           m_transition.setVoltage(transitionVoltage.get());
+        },
+        m_transition);
+  }
+
+  public static Command TransitionRPMTestCommand(Transition m_transition) {
+    LoggedNetworkNumber transitionRPM =
+        new LoggedNetworkNumber("/Transition/TransitionVelocity/", 0.0);
+    return Commands.run(
+        () -> {
+          m_transition.setTransitionRPM(transitionRPM.get());
         },
         m_transition);
   }

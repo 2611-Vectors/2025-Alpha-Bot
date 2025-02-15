@@ -40,15 +40,15 @@ public final class Constants {
   public static int LEFT_ELEVATOR_ID = 40;
   public static int RIGHT_ELEVATOR_ID = 41;
 
-  public static double ELEVATOR_P = 0;
-  public static double ELEVATOR_I = 0;
+  public static double ELEVATOR_P = 4;
+  public static double ELEVATOR_I = 0.01;
   public static double ELEVATOR_D = 0;
 
   // This equals the gear ratio of the elevator motor times pi times the diamitor of the string
   // housing
   // 4 is the gear ratio
   // 2 is the diamitor of the string housing
-  public static double ROTATIONS_TO_INCHES = 4 * Math.PI * 2;
+  public static double ROTATIONS_TO_INCHES = (Math.PI * 2.1702) / 4;
 
   // Transition Code
   public static final int TRANSITION_ID = 31;
