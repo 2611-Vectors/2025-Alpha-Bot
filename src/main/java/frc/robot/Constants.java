@@ -69,13 +69,18 @@ public final class Constants {
   public static double TRANSITION_I = 0.0;
   public static double TRANSITION_D = 0.0;
 
-  public static final double HOME_HEIGHT_IN = 1.0;
-  public static final double L2_HEIGHT_IN = 1.0;
-  public static final double L3_HEIGHT_IN = 13.0;
-  public static final double L4_HEIGHT_IN = 54.0;
+  public static class Setpoints {
+    public static final double HOME_HEIGHT_IN = 1.0;
+    public static final double L2_HEIGHT_IN = 1.0;
+    public static final double L3_HEIGHT_IN = 13.0;
+    public static final double L4_HEIGHT_IN = 54.0;
 
-  public static final double HOME_ANGLE = -90;
-  public static final double L2_ANGLE = -35;
-  public static final double L3_ANGLE = -35;
-  public static final double L4_ANGLE = 0;
+    public static final double HOME_ANGLE = -90;
+    public static final double L2_ANGLE = -35;
+    public static final double L3_ANGLE = -35;
+    public static final double L4_ANGLE = 0;
+
+    public static final double POSITION_TOLERANCE = 1.0;
+    public static final double ANGLE_TOLERANCE = 3.0;
+  }
 }

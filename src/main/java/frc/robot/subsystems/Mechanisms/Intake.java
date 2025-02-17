@@ -6,6 +6,7 @@ package frc.robot.subsystems.Mechanisms;
 
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -18,7 +19,7 @@ import org.littletonrobotics.junction.Logger;
 public class Intake extends SubsystemBase {
   private final TalonFX intake = new TalonFX(Constants.INTAKE_MOTOR_ID);
   private final TalonFX pivot = new TalonFX(Constants.PIVOT_MOTOR_ID);
-
+  private final TalonFX endEffector = new TalonFX(43);
   private TunablePIDController intakePIDController =
       new TunablePIDController(0.0, 0.0, 0.0, "/Intake/IntakePID/");
   // Can not dynamiclly tune feed forward as far as we know
@@ -26,7 +27,7 @@ public class Intake extends SubsystemBase {
       new SimpleMotorFeedforward(0.218079, 0.120429, 0.0);
 
   private TunablePIDController intakePivotPIDController =
-      new TunablePIDController(0.0, 0.0, 0.0, "/intakePivot/PivotPID/");
+      new TunablePIDController(0.3, 0.0, 0.0, "/intakePivot/PivotPID/");
   private ArmFeedforward intakePivotFeedforwardController = new ArmFeedforward(0.0, 0.0, 0.0);
 
   private double intakeRPS = 0.0;
@@ -35,18 +36,26 @@ public class Intake extends SubsystemBase {
 
   /** Creates a new Intake. */
   public Intake() {
-    PhoenixUtil.configMotor(
-        intake, false, intakePivotPIDController, intakePivotFeedforwardController);
+    PhoenixUtil.configMotor(intake, false, intakePIDController, intakePivotFeedforwardController);
 
-    PhoenixUtil.configMotor(pivot, false, new PIDController(0, 0, 0), new ArmFeedforward(0, 0, 0));
+    PhoenixUtil.configMotor(
+        pivot,
+        true,
+        new PIDController(0, 0, 0),
+        new ArmFeedforward(0, 0, 0),
+        NeutralModeValue.Brake);
+  }
+
+  public void setEndEffectorVoltage(double voltage) {
+    endEffector.setVoltage(voltage);
   }
 
   public void setIntakeVoltage(double voltage) {
     intake.setVoltage(voltage);
   }
 
-  public void setPivotVoltage(double volatge) {
-    pivot.setVoltage(volatge);
+  public void setPivotVoltage(double voltage) {
+    pivot.setVoltage(voltage);
   }
 
   public double getPivotPosition() {
@@ -82,7 +91,11 @@ public class Intake extends SubsystemBase {
   }
 
   public void extendIntake() {
-    pivot.setControl(m_PositionVoltage.withPosition(10));
+    pivot.setVoltage(intakePivotPIDController.calculate(getPivotPosition(), 15.0));
+  }
+
+  public void retractIntake() {
+    pivot.setVoltage(intakePivotPIDController.calculate(getPivotPosition(), 1.0));
   }
 
   @Override
@@ -97,5 +110,6 @@ public class Intake extends SubsystemBase {
     // + intakeSimpleFFController.calculate(intakeRPS));
     // currentIntakeRPS.set(intake.getVelocity().getValueAsDouble());
     // currentIntakeVoltage.set(intake.getMotorVoltage().getValueAsDouble());
+    intakePivotPIDController.update();
   }
 }

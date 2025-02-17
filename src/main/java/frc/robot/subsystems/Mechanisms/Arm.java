@@ -61,6 +61,13 @@ public class Arm extends SubsystemBase {
     // return correctedAngle;
   }
 
+  public static double getRelativeAngle(double angle1, double angle2) {
+    double difference = (angle2 - angle1 + 180) % 360 - 180;
+    Logger.recordOutput(
+        "Testing/AngleDifference", difference < -180 ? difference + 360 : difference);
+    return difference < -180 ? difference + 360 : difference;
+  }
+
   public void setPivotAngle(double angle) {
     double pidPart = armPID.calculate(getPivotAngle(), angle);
     double ffPart = 0;
