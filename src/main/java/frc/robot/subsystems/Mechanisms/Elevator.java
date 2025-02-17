@@ -4,24 +4,23 @@
 
 package frc.robot.subsystems.Mechanisms;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.PhoenixUtil;
+import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
   private final TalonFX leftMotor;
   private final TalonFX rightMotor;
 
-  private final PIDController elevatorPID = new PIDController(Constants.ELEVATOR_P, Constants.ELEVATOR_I, Constants.ELEVATOR_D);
-  private final ElevatorFeedforward elevatorFF = new ElevatorFeedforward(0.0, 0.45, 0.0);
+  private final PIDController elevatorPID =
+      new PIDController(Constants.ELEVATOR_P, Constants.ELEVATOR_I, Constants.ELEVATOR_D);
+  public final ElevatorFeedforward elevatorFF = new ElevatorFeedforward(0.0, 0.45, 0.0);
 
   /** Creates a new Elevator. */
   public Elevator() {
@@ -38,10 +37,7 @@ public class Elevator extends SubsystemBase {
     rightMotor.setVoltage(voltage);
   }
 
-  /**
-   * Sets the Elevator to a target position and should be called periodically unit
-   * are in inches
-   */
+  /** Sets the Elevator to a target position and should be called periodically unit are in inches */
   public void setElevatorPosition(double target) {
     Logger.recordOutput("Elevator/TargetPosition", target);
 
@@ -56,8 +52,7 @@ public class Elevator extends SubsystemBase {
   }
 
   /**
-   * Function to get the Elevator position uses the left by default but graphs
-   * both the left and
+   * Function to get the Elevator position uses the left by default but graphs both the left and
    * right encoder values
    */
   public double getLeftElevatorPosition() {

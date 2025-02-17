@@ -23,10 +23,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.TransitionCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Mechanisms.Arm;
 import frc.robot.subsystems.Mechanisms.Elevator;
 import frc.robot.subsystems.Mechanisms.Intake;
 import frc.robot.subsystems.Mechanisms.Transition;
@@ -50,6 +50,7 @@ public class RobotContainer {
   private final Intake m_Intake;
   private final Transition m_Transition;
   private final Elevator m_Elevator;
+  private final Arm m_Arm;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -98,6 +99,7 @@ public class RobotContainer {
     m_Intake = new Intake();
     m_Transition = new Transition();
     m_Elevator = new Elevator();
+    m_Arm = new Arm();
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -147,11 +149,133 @@ public class RobotContainer {
     m_Transition.setDefaultCommand(
         TransitionCommands.TransitionRPSTestCommand(
             m_Transition)); // , () -> operatorController.getRightY()));
-
-    m_Elevator.setDefaultCommand(
-        ElevatorCommands.ElevatorTestCommand(
-            m_Elevator)); // , () -> -operatorController.getLeftY()));
-
+    operatorController
+        .x()
+        .whileTrue(
+            Commands.race(
+                    Commands.run(
+                        () -> {
+                          m_Elevator.setElevatorPosition(Constants.HOME_HEIGHT_IN);
+                          m_Arm.setPivotAngle(Constants.HOME_ANGLE);
+                        },
+                        m_Elevator,
+                        m_Arm),
+                    Commands.waitUntil(
+                        () ->
+                            Math.abs(
+                                    Constants.HOME_HEIGHT_IN - m_Elevator.getLeftElevatorPosition())
+                                < 1))
+                .andThen(
+                    Commands.run(
+                        () -> {
+                          m_Elevator.setElevatorPosition(Constants.HOME_HEIGHT_IN);
+                          m_Arm.setPivotAngle(Constants.HOME_ANGLE);
+                        },
+                        m_Elevator,
+                        m_Arm))
+                .finallyDo(
+                    () -> {
+                      m_Elevator.setVoltage(m_Elevator.elevatorFF.getKg());
+                      m_Arm.setArmVoltage(0);
+                    }));
+    operatorController
+        .a()
+        .whileTrue(
+            Commands.race(
+                    Commands.run(
+                        () -> {
+                          m_Elevator.setElevatorPosition(Constants.L2_HEIGHT_IN);
+                          m_Arm.setPivotAngle(Constants.HOME_ANGLE);
+                        },
+                        m_Elevator,
+                        m_Arm),
+                    Commands.waitUntil(
+                        () ->
+                            Math.abs(Constants.L2_HEIGHT_IN - m_Elevator.getLeftElevatorPosition())
+                                < 1))
+                .andThen(
+                    Commands.run(
+                        () -> {
+                          m_Elevator.setElevatorPosition(Constants.L2_HEIGHT_IN);
+                          m_Arm.setPivotAngle(Constants.L2_ANGLE);
+                        },
+                        m_Elevator,
+                        m_Arm))
+                .finallyDo(
+                    () -> {
+                      m_Elevator.setVoltage(m_Elevator.elevatorFF.getKg());
+                      m_Arm.setArmVoltage(0);
+                    }));
+    operatorController
+        .b()
+        .whileTrue(
+            Commands.race(
+                    Commands.run(
+                        () -> {
+                          m_Elevator.setElevatorPosition(Constants.L3_HEIGHT_IN);
+                          m_Arm.setPivotAngle(Constants.HOME_ANGLE);
+                        },
+                        m_Elevator,
+                        m_Arm),
+                    Commands.waitUntil(
+                        () ->
+                            Math.abs(Constants.L3_HEIGHT_IN - m_Elevator.getLeftElevatorPosition())
+                                < 1))
+                .andThen(
+                    Commands.run(
+                        () -> {
+                          m_Elevator.setElevatorPosition(Constants.L3_HEIGHT_IN);
+                          m_Arm.setPivotAngle(Constants.L3_ANGLE);
+                        },
+                        m_Elevator,
+                        m_Arm))
+                .finallyDo(
+                    () -> {
+                      m_Elevator.setVoltage(m_Elevator.elevatorFF.getKg());
+                      m_Arm.setArmVoltage(0);
+                    }));
+    operatorController
+        .y()
+        .whileTrue(
+            Commands.race(
+                    Commands.run(
+                        () -> {
+                          m_Elevator.setElevatorPosition(Constants.L4_HEIGHT_IN);
+                          m_Arm.setPivotAngle(Constants.HOME_ANGLE);
+                        },
+                        m_Elevator,
+                        m_Arm),
+                    Commands.waitUntil(
+                        () ->
+                            Math.abs(Constants.L4_HEIGHT_IN - m_Elevator.getLeftElevatorPosition())
+                                < 1))
+                .andThen(
+                    Commands.run(
+                        () -> {
+                          m_Elevator.setElevatorPosition(Constants.L4_HEIGHT_IN);
+                          m_Arm.setPivotAngle(Constants.L4_ANGLE);
+                        },
+                        m_Elevator,
+                        m_Arm))
+                .finallyDo(
+                    () -> {
+                      m_Elevator.setVoltage(m_Elevator.elevatorFF.getKg());
+                      m_Arm.setArmVoltage(0);
+                    }));
+    // m_Elevator.setDefaultCommand(
+    //     ElevatorCommands.ElevatorTestCommand(
+    //         m_Elevator)); // , () -> -operatorController.getLeftY()));
+    // m_Arm.setDefaultCommand(
+    //     ArmCommands.ArmTestCommand(m_Arm)); // , () -> operatorController.getLeftY(), () ->
+    // operatorController.getRightY()));
+    // m_Elevator.setDefaultCommand(
+    //     ElevatorCommands.ElevatorSimpleController(
+    //         m_Elevator,
+    //         m_Arm,
+    //         () -> operatorController.getHID().getAButton(),
+    //         () -> operatorController.getHID().getBButton(),
+    //         () -> operatorController.getHID().getXButton(),
+    //         () -> operatorController.getHID().getYButton()));
     // Lock to 0° when A button is held
     controller
         .a()

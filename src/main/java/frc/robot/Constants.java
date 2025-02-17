@@ -59,11 +59,23 @@ public final class Constants {
   public static final int INTAKE_MOTOR_ID = 33;
   public static final int PIVOT_MOTOR_ID = 32;
 
-  public static final int ARM_MOTOR_ID = 0;
+  public static final int ARM_MOTOR_ID = 44;
   public static final int ARM_PIVOT_PORT = 0;
-  public static final int PIVOT_ANGLE_OFFSET = 0;
+  public static final int PIVOT_ANGLE_OFFSET = -90;
+  public static final double ARM_GEAR_RATIO = 43.95;
+  public static final double ARM_MAX_VOLTAGE = 1.0; // Set this to 8 for competition
 
   public static double TRANSITION_P = 0.0;
   public static double TRANSITION_I = 0.0;
   public static double TRANSITION_D = 0.0;
+
+  public static final double HOME_HEIGHT_IN = 1.0;
+  public static final double L2_HEIGHT_IN = 1.0;
+  public static final double L3_HEIGHT_IN = 13.0;
+  public static final double L4_HEIGHT_IN = 54.0;
+
+  public static final double HOME_ANGLE = -90;
+  public static final double L2_ANGLE = -35;
+  public static final double L3_ANGLE = -35;
+  public static final double L4_ANGLE = 0;
 }
