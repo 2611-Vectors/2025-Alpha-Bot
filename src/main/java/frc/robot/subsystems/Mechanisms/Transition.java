@@ -50,9 +50,12 @@ public class Transition extends SubsystemBase {
   public void setTransitionRPS(double RPS) {
     Logger.recordOutput("/Transition/TargetVelocity", RPS);
     transitionMotor.setVoltage(
-        controllerPID.calculate(transitionMotor.getEncoder().getVelocity(), RPS)
-            + transitionSimpleFFController.calculateWithVelocities(
-                transitionMotor.getEncoder().getVelocity(), RPS));
+        controllerPID.calculate(getTransitionRPS(), RPS)
+            + transitionSimpleFFController.calculateWithVelocities(getTransitionRPS(), RPS));
+  }
+
+  public double getTransitionRPS() {
+    return transitionMotor.getEncoder().getVelocity() / 60.0;
   }
 
   @Override
@@ -66,7 +69,6 @@ public class Transition extends SubsystemBase {
     // // voltage
     // currentTransitionVoltage.set(
     //     transitionMotor.getBusVoltage() * transitionMotor.getAppliedOutput());
-    Logger.recordOutput(
-        "Transition/VelocityRPS", transitionMotor.getEncoder().getVelocity() / 60.0);
+    Logger.recordOutput("Transition/VelocityRPS", getTransitionRPS());
   }
 }

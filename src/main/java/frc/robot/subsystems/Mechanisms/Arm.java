@@ -10,6 +10,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.util.MechanismSimulator;
+import frc.robot.util.MechanismSimulatorActual;
 import frc.robot.util.PhoenixUtil;
 import frc.robot.util.TunablePIDController;
 import org.littletonrobotics.junction.Logger;
@@ -70,6 +72,9 @@ public class Arm extends SubsystemBase {
    */
   public void setPivotAngle(double angle) {
     Logger.recordOutput("Arm/TargetAngle", angle);
+
+    MechanismSimulator.updateArm(angle);
+
     double pidPart = armPID.calculate(getPivotAngle(), angle);
     double ffPart = 0;
     arm.setVoltage(
@@ -80,6 +85,7 @@ public class Arm extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     Logger.recordOutput("Arm/current angle", getPivotAngle());
+    MechanismSimulatorActual.updateArm(getPivotAngle());
     armPID.update();
   }
 }

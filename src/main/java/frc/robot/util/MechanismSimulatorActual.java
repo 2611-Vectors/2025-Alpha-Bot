@@ -4,38 +4,37 @@
 
 package frc.robot.util;
 
-import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
-
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 /** Add your docs here. */
 public class MechanismSimulatorActual {
-    static Mechanism2d elevatorMech = new Mechanism2d(3, 3);
-    static MechanismRoot2d elevatorRoot = elevatorMech.getRoot("Elevator", 1.5, 0);
-    static MechanismLigament2d m_elevator = elevatorRoot.append(new MechanismLigament2d("elevator", 1, 90));
-    static MechanismLigament2d m_arm = m_elevator.append(
-        new MechanismLigament2d(
-            "wrist", 0.4572, 90, 6, new Color8Bit(Color.kPurple)
-            ));
+  static Mechanism2d elevatorMech = new Mechanism2d(3, 3);
+  static MechanismRoot2d elevatorRoot = elevatorMech.getRoot("Elevator", 1.5, 0);
+  static MechanismLigament2d m_elevator =
+      elevatorRoot.append(new MechanismLigament2d("elevator", 1, 90));
+  static MechanismLigament2d m_arm =
+      m_elevator.append(
+          new MechanismLigament2d("wrist", 0.4572, 90, 6, new Color8Bit(Color.kPurple)));
 
-    static LoggedNetworkNumber elevatorPosition, wristAngle;
+  static LoggedNetworkNumber elevatorPosition, wristAngle;
 
-    public static void init(){
-        elevatorPosition = new LoggedNetworkNumber("/Tuning/ElevatorSim/ElevatorActualPosition", 0.5);
-        wristAngle = new LoggedNetworkNumber("/Tuning/ElevatorSim/WristActualAngle", 90);
-        SmartDashboard.putData("Mech2D", elevatorMech);
-    }
+  public static void init() {
+    elevatorPosition = new LoggedNetworkNumber("/Tuning/ElevatorSim/ElevatorActualPosition", 0.5);
+    wristAngle = new LoggedNetworkNumber("/Tuning/ElevatorSim/WristActualAngle", 90);
+    SmartDashboard.putData("Mech2Dactual", elevatorMech);
+  }
 
-    public static void updateArm(double angle){
-        m_arm.setAngle(angle);
-    }
+  public static void updateArm(double angle) {
+    m_arm.setAngle(angle + 90);
+  }
 
-    public static void updateElevator(double position){
-        m_elevator.setLength(position);
-    }
+  public static void updateElevator(double position) {
+    m_elevator.setLength(position / 39.37);
+  }
 }

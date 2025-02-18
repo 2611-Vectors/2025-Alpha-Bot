@@ -12,6 +12,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.MechanismSimulator;
+import frc.robot.util.MechanismSimulatorActual;
 import frc.robot.util.PhoenixUtil;
 import org.littletonrobotics.junction.Logger;
 
@@ -43,7 +44,7 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput("Elevator/TargetPosition", target);
 
     // Simulator update
-    MechanismSimulator.updateElevator(target + 0.5163);
+    MechanismSimulator.updateElevator(target + 20.33);
 
     double pidPart = elevatorPID.calculate(getLeftElevatorPosition(), target);
     double ffPart = elevatorFF.calculate(target);
@@ -72,5 +73,6 @@ public class Elevator extends SubsystemBase {
     // Telemetry for position might be useful for the simulator hint hint hint
     Logger.recordOutput("Elevator/LeftEncoder", getLeftElevatorPosition());
     Logger.recordOutput("Elevator/RightEncoder", getRightElevatorPosition());
+    MechanismSimulatorActual.updateElevator(getLeftElevatorPosition() + 20.33);
   }
 }
