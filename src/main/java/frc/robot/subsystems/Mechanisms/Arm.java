@@ -56,6 +56,15 @@ public class Arm extends SubsystemBase {
     return difference < -180 ? difference + 360 : difference;
   }
 
+  /** Function to flip the angle for other side of the robot */
+  public static double flipAngle(double angle) {
+    double reflectedAngle = -180 - angle;
+    if (reflectedAngle < -180) {
+      return reflectedAngle + 360;
+    }
+    return reflectedAngle;
+  }
+
   /**
    * Sets the Arm Pivot to a target position and should be called periodically unit are in degrees
    */
