@@ -36,6 +36,7 @@ public class IntakeCommands {
         },
         m_intake);
   }
+
   /** Voltage control of intake and pivot based off controllers */
   public static Command IntakeSimpleController(
       Intake m_intake, Supplier<Double> intakeSupplier, Supplier<Double> pivotSupplier) {
