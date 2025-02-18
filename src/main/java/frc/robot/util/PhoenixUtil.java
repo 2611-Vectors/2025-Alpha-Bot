@@ -120,4 +120,23 @@ public class PhoenixUtil {
     PhoenixUtil.tryUntilOk(5, () -> motor.getConfigurator().apply(configs, 0.25));
     motor.setPosition(0);
   }
+
+  public static void configMotor(TalonFX motor, boolean inverted, NeutralModeValue motorOutput) {
+    TalonFXConfiguration configs = new TalonFXConfiguration();
+    configs.MotorOutput.Inverted =
+        inverted ? InvertedValue.CounterClockwise_Positive : InvertedValue.Clockwise_Positive;
+
+    // Peak output of 8 V
+    configs.Voltage.PeakForwardVoltage = 8;
+    configs.Voltage.PeakReverseVoltage = -8;
+
+    configs.CurrentLimits.StatorCurrentLimit = 60;
+    configs.CurrentLimits.StatorCurrentLimitEnable = true;
+
+    // Example on how you would do break mode / coast mode
+    configs.MotorOutput.NeutralMode = motorOutput;
+
+    PhoenixUtil.tryUntilOk(5, () -> motor.getConfigurator().apply(configs, 0.25));
+    motor.setPosition(0);
+  }
 }

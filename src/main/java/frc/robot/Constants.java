@@ -55,19 +55,22 @@ public final class Constants {
   // Transition Code
   public static final int TRANSITION_ID = 31;
 
-  // Intake Code
+  // Intake Constants
   public static final int INTAKE_MOTOR_ID = 33;
   public static final int PIVOT_MOTOR_ID = 32;
+  public static final double INTAKE_EXTENDED = 15.0;
+  public static final double INTAKE_RETRACTED = 1.0;
 
+  // Arm Constants
   public static final int ARM_MOTOR_ID = 44;
   public static final int ARM_PIVOT_PORT = 0;
   public static final int PIVOT_ANGLE_OFFSET = -90;
   public static final double ARM_GEAR_RATIO = 43.95;
   public static final double ARM_MAX_VOLTAGE = 1.0; // Set this to 8 for competition
 
-  public static double TRANSITION_P = 0.0;
-  public static double TRANSITION_I = 0.0;
-  public static double TRANSITION_D = 0.0;
+  public static final double TRANSITION_P = 0.0;
+  public static final double TRANSITION_I = 0.0;
+  public static final double TRANSITION_D = 0.0;
 
   public static class Setpoints {
     public static final double HOME_HEIGHT_IN = 1.0;

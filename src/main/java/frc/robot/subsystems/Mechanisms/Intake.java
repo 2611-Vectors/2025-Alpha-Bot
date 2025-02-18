@@ -4,11 +4,8 @@
 
 package frc.robot.subsystems.Mechanisms;
 
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -19,97 +16,80 @@ import org.littletonrobotics.junction.Logger;
 public class Intake extends SubsystemBase {
   private final TalonFX intake = new TalonFX(Constants.INTAKE_MOTOR_ID);
   private final TalonFX pivot = new TalonFX(Constants.PIVOT_MOTOR_ID);
+
+  // FIXME this should not be in here this is temp
   private final TalonFX endEffector = new TalonFX(43);
+
   private TunablePIDController intakePIDController =
       new TunablePIDController(0.0, 0.0, 0.0, "/Intake/IntakePID/");
-  // Can not dynamiclly tune feed forward as far as we know
+  // You can dynamically tune FF you do the same thing I did with PID where I created a new class
+  // for it though you wouldn't want to as FF should be calculated empirically if possible
   private SimpleMotorFeedforward intakeSimpleFFController =
       new SimpleMotorFeedforward(0.218079, 0.120429, 0.0);
 
   private TunablePIDController intakePivotPIDController =
       new TunablePIDController(0.3, 0.0, 0.0, "/intakePivot/PivotPID/");
-  private ArmFeedforward intakePivotFeedforwardController = new ArmFeedforward(0.0, 0.0, 0.0);
-
-  private double intakeRPS = 0.0;
-
-  private final PositionVoltage m_PositionVoltage = new PositionVoltage(0).withSlot(0);
 
   /** Creates a new Intake. */
   public Intake() {
-    PhoenixUtil.configMotor(intake, false, intakePIDController, intakePivotFeedforwardController);
-
-    PhoenixUtil.configMotor(
-        pivot,
-        true,
-        new PIDController(0, 0, 0),
-        new ArmFeedforward(0, 0, 0),
-        NeutralModeValue.Brake);
+    PhoenixUtil.configMotor(intake, false, NeutralModeValue.Coast);
+    PhoenixUtil.configMotor(pivot, true, NeutralModeValue.Brake);
   }
 
+  // FIXME this should not be in here this is temp
   public void setEndEffectorVoltage(double voltage) {
     endEffector.setVoltage(voltage);
   }
 
+  /** Function for voltage control for intake motor */
   public void setIntakeVoltage(double voltage) {
     intake.setVoltage(voltage);
   }
 
+  /** Function for voltage control for pivot motor */
   public void setPivotVoltage(double voltage) {
     pivot.setVoltage(voltage);
   }
 
+  /** Returns the amount of rotations of the pivot motor */
   public double getPivotPosition() {
     return pivot.getPosition().getValueAsDouble();
   }
 
-  public PIDController getIntakePivotPID() {
-    return intakePivotPIDController;
+  /** Returns intake velocity in units of RPS */
+  public double getIntakeVelocity() {
+    return intake.getVelocity().getValueAsDouble();
   }
 
-  public void setIntakePivotPID(double p, double i, double d) {
-    intakePivotPIDController.setP(p);
-    intakePivotPIDController.setI(i);
-    intakePivotPIDController.setD(d);
-  }
-
-  public void setIntakePID(double p, double i, double d) {
-    intakePIDController.setP(p);
-    intakePIDController.setI(i);
-    intakePIDController.setD(d);
-  }
-
-  public void setIntakeFF(double s, double v, double a) {
-    intakeSimpleFFController = new SimpleMotorFeedforward(s, v, a);
-  }
-
+  /**
+   * Sets the Intake to a target velocity and should be called periodically unit are in revolution
+   * per second
+   */
   public void setIntakeRPS(double RPS) {
     Logger.recordOutput("Intake/TargetVelocity", RPS);
-    intake.setVoltage(
-        intakePIDController.calculate(intake.getVelocity().getValueAsDouble(), RPS)
-            + intakeSimpleFFController.calculateWithVelocities(
-                intake.getVelocity().getValueAsDouble(), RPS));
+    double pidPart = intakePIDController.calculate(getIntakeVelocity(), RPS);
+    double ffPart = intakeSimpleFFController.calculateWithVelocities(getIntakeVelocity(), RPS);
+    intake.setVoltage(pidPart + ffPart);
   }
 
+  /** Sets the pivot to extended state and should be called periodically unit are in revolutions */
   public void extendIntake() {
-    pivot.setVoltage(intakePivotPIDController.calculate(getPivotPosition(), 15.0));
+    pivot.setVoltage(
+        intakePivotPIDController.calculate(getPivotPosition(), Constants.INTAKE_EXTENDED));
   }
 
+  /** Sets the pivot to retracted state and should be called periodically unit are in revolutions */
   public void retractIntake() {
-    pivot.setVoltage(intakePivotPIDController.calculate(getPivotPosition(), 1.0));
+    pivot.setVoltage(
+        intakePivotPIDController.calculate(getPivotPosition(), Constants.INTAKE_RETRACTED));
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    Logger.recordOutput("Intake/EncoderPosition", getPivotPosition());
-    Logger.recordOutput("Intake/Velocity", intake.getVelocity().getValueAsDouble());
-    Logger.recordOutput("Intake/PivotPosition", pivot.getPosition().getValueAsDouble());
-    // intake.setVoltage(
-    // intakePIDController.calculate(intake.getVelocity().getValueAsDouble(),
-    // intakeRPS)
-    // + intakeSimpleFFController.calculate(intakeRPS));
-    // currentIntakeRPS.set(intake.getVelocity().getValueAsDouble());
-    // currentIntakeVoltage.set(intake.getMotorVoltage().getValueAsDouble());
+    Logger.recordOutput("Intake/PivotPosition", getPivotPosition());
+    Logger.recordOutput("Intake/Velocity", getIntakeVelocity());
+
     intakePivotPIDController.update();
   }
 }
