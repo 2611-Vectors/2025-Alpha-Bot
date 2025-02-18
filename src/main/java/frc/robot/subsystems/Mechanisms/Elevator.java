@@ -11,6 +11,7 @@ import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.util.MechanismSimulator;
 import frc.robot.util.PhoenixUtil;
 import org.littletonrobotics.junction.Logger;
 
@@ -41,7 +42,8 @@ public class Elevator extends SubsystemBase {
   public void setElevatorPosition(double target) {
     Logger.recordOutput("Elevator/TargetPosition", target);
 
-    // TODO Add a simulator update
+    // Simulator update
+    MechanismSimulator.updateElevator(target + 0.5163);
 
     double pidPart = elevatorPID.calculate(getLeftElevatorPosition(), target);
     double ffPart = elevatorFF.calculate(target);
