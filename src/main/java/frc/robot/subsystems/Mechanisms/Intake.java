@@ -20,14 +20,14 @@ public class Intake extends SubsystemBase {
   // FIXME this should not be in here this is temp
   private final TalonFX endEffector = new TalonFX(43);
 
-  private TunablePIDController intakePIDController =
+  private TunablePIDController intakePID =
       new TunablePIDController(0.0, 0.0, 0.0, "/Intake/IntakePID/");
   // You can dynamically tune FF you do the same thing I did with PID where I created a new class
   // for it though you wouldn't want to as FF should be calculated empirically if possible
-  private SimpleMotorFeedforward intakeSimpleFFController =
+  private SimpleMotorFeedforward intakeSimpleFF =
       new SimpleMotorFeedforward(0.218079, 0.120429, 0.0);
 
-  private TunablePIDController intakePivotPIDController =
+  private TunablePIDController intakePivotPID =
       new TunablePIDController(0.3, 0.0, 0.0, "/intakePivot/PivotPID/");
 
   /** Creates a new Intake. */
@@ -67,21 +67,19 @@ public class Intake extends SubsystemBase {
    */
   public void setIntakeRPS(double RPS) {
     Logger.recordOutput("Intake/TargetVelocity", RPS);
-    double pidPart = intakePIDController.calculate(getIntakeVelocity(), RPS);
-    double ffPart = intakeSimpleFFController.calculateWithVelocities(getIntakeVelocity(), RPS);
+    double pidPart = intakePID.calculate(getIntakeVelocity(), RPS);
+    double ffPart = intakeSimpleFF.calculateWithVelocities(getIntakeVelocity(), RPS);
     intake.setVoltage(pidPart + ffPart);
   }
 
   /** Sets the pivot to extended state and should be called periodically unit are in revolutions */
   public void extendIntake() {
-    pivot.setVoltage(
-        intakePivotPIDController.calculate(getPivotPosition(), Constants.INTAKE_EXTENDED));
+    pivot.setVoltage(intakePivotPID.calculate(getPivotPosition(), Constants.INTAKE_EXTENDED));
   }
 
   /** Sets the pivot to retracted state and should be called periodically unit are in revolutions */
   public void retractIntake() {
-    pivot.setVoltage(
-        intakePivotPIDController.calculate(getPivotPosition(), Constants.INTAKE_RETRACTED));
+    pivot.setVoltage(intakePivotPID.calculate(getPivotPosition(), Constants.INTAKE_RETRACTED));
   }
 
   @Override
@@ -90,6 +88,6 @@ public class Intake extends SubsystemBase {
     Logger.recordOutput("Intake/PivotPosition", getPivotPosition());
     Logger.recordOutput("Intake/Velocity", getIntakeVelocity());
 
-    intakePivotPIDController.update();
+    intakePivotPID.update();
   }
 }
