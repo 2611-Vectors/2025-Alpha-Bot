@@ -23,7 +23,7 @@ public class MechanismSimulator {
       elevatorRoot.append(new MechanismLigament2d("elevator", 1, 90));
   static MechanismLigament2d m_arm =
       m_elevator.append(
-          new MechanismLigament2d("wrist", 0.4572, 90, 6, new Color8Bit(Color.kPurple)));
+          new MechanismLigament2d("wrist", 0.5164582, 0, 6, new Color8Bit(Color.kPurple)));
 
   static LoggedNetworkNumber elevatorPosition, wristAngle;
 

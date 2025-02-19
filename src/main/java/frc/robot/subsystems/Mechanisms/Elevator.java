@@ -29,8 +29,8 @@ public class Elevator extends SubsystemBase {
     leftMotor = new TalonFX(Constants.LEFT_ELEVATOR_ID);
     rightMotor = new TalonFX(Constants.RIGHT_ELEVATOR_ID);
 
-    PhoenixUtil.configMotor(leftMotor, true, elevatorPID, elevatorFF, NeutralModeValue.Brake);
-    PhoenixUtil.configMotor(rightMotor, false, elevatorPID, elevatorFF, NeutralModeValue.Brake);
+    PhoenixUtil.configMotor(leftMotor, true, NeutralModeValue.Brake);
+    PhoenixUtil.configMotor(rightMotor, false, NeutralModeValue.Brake);
   }
 
   /** Function for voltage control */

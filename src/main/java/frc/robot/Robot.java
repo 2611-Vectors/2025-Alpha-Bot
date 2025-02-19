@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.generated.TunerConstants;
+import frc.robot.util.CustomAutoBuilder;
 import frc.robot.util.MechanismSimulator;
 import frc.robot.util.MechanismSimulatorActual;
 import org.littletonrobotics.junction.LogFileUtil;
@@ -99,12 +100,12 @@ public class Robot extends LoggedRobot {
       }
     }
 
+    MechanismSimulator.init();
+    MechanismSimulatorActual.init();
+    CustomAutoBuilder.chooserBuilder();
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
-
-    MechanismSimulator.init();
-    MechanismSimulatorActual.init();
   }
 
   /** This function is called periodically during all modes. */
@@ -130,7 +131,9 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically when disabled. */
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    CustomAutoBuilder.update();
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override

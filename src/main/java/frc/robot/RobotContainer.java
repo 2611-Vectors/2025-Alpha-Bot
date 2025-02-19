@@ -181,14 +181,7 @@ public class RobotContainer {
     // m_Arm.setDefaultCommand(
     //     ArmCommands.ArmTestCommand(m_Arm)); // , () -> operatorController.getLeftY(), () ->
     // operatorController.getRightY()));
-    // m_Elevator.setDefaultCommand(
-    //     ElevatorCommands.ElevatorSimpleController(
-    //         m_Elevator,
-    //         m_Arm,
-    //         () -> operatorController.getHID().getAButton(),
-    //         () -> operatorController.getHID().getBButton(),
-    //         () -> operatorController.getHID().getXButton(),
-    //         () -> operatorController.getHID().getYButton()));
+
     // Lock to 0° when A button is held
     controller
         .a()

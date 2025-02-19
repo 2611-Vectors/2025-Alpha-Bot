@@ -13,6 +13,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -85,5 +87,26 @@ public final class Constants {
 
     public static final double POSITION_TOLERANCE = 1.0;
     public static final double ANGLE_TOLERANCE = 3.0;
+  }
+
+  public static class AutonConstants {
+    public static final Rotation2d START_ROTATION = Rotation2d.fromDegrees(0); // 180
+
+    public static final Pose2d START_LEFT = new Pose2d(8.0, 7.29, START_ROTATION);
+    public static final Pose2d START_CENTER = new Pose2d(8.0, 6.20, START_ROTATION);
+    public static final Pose2d START_RIGHT = new Pose2d(8.0, 5.13, START_ROTATION);
+
+    public static final Pose2d AB = new Pose2d(3.0, 4.0, Rotation2d.fromDegrees(0));
+    public static final Pose2d CD = new Pose2d(3.7, 2.7, Rotation2d.fromDegrees(60));
+    public static final Pose2d EF = new Pose2d(5.2, 2.7, Rotation2d.fromDegrees(120));
+    public static final Pose2d GH = new Pose2d(6.0, 4.0, Rotation2d.fromDegrees(180));
+    public static final Pose2d IJ = new Pose2d(5.3, 5.3, Rotation2d.fromDegrees(-120));
+    public static final Pose2d KL = new Pose2d(3.8, 5.3, Rotation2d.fromDegrees(-60));
+
+    public static final Pose2d R1 = new Pose2d(2, 6.1, Rotation2d.fromDegrees(-150));
+    public static final Pose2d R0 = new Pose2d(1.5, 1.4, Rotation2d.fromDegrees(60));
+
+    public static final double MAX_VELOCITY = 1; // 5.1
+    public static final double MAX_ACCELERATION = 0.75; // 2.9
   }
 }
