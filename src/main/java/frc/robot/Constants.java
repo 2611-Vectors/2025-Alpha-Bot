@@ -13,8 +13,13 @@
 
 package frc.robot;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -70,20 +75,24 @@ public final class Constants {
   public static final double ARM_GEAR_RATIO = 43.95;
   public static final double ARM_MAX_VOLTAGE = 1.0; // Set this to 8 for competition
 
+  public static final int END_EFFECTOR_ID = 43;
+
   public static final double TRANSITION_P = 0.0;
   public static final double TRANSITION_I = 0.0;
   public static final double TRANSITION_D = 0.0;
 
   public static class Setpoints {
     public static final double HOME_HEIGHT_IN = 1.0;
-    public static final double L2_HEIGHT_IN = 1.0;
+    public static final double L2_HEIGHT_IN = 7.0;
     public static final double L3_HEIGHT_IN = 13.0;
     public static final double L4_HEIGHT_IN = 54.0;
+    public static final double INTAKE_HEIGHT_IN = 28.50;
 
     public static final double HOME_ANGLE = -90;
-    public static final double L2_ANGLE = -35;
+    public static final double L2_ANGLE = -55;
     public static final double L3_ANGLE = -35;
     public static final double L4_ANGLE = 0;
+    public static final double INTAKE_ANGLE = 45.0;
 
     public static final double POSITION_TOLERANCE = 1.0;
     public static final double ANGLE_TOLERANCE = 3.0;
@@ -108,5 +117,40 @@ public final class Constants {
 
     public static final double MAX_VELOCITY = 1; // 5.1
     public static final double MAX_ACCELERATION = 0.75; // 2.9
+  }
+
+  public static class VisionConstants {
+    // Apriltag Field Layout
+    public static AprilTagFieldLayout aprilTagLayout =
+        AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+
+    // Name of the PhotonVision Reef Camera
+    public static String reefCamName = "ReefTagCam";
+
+    // Position of the PhotonVision Reef Camera
+    public static Transform3d robotToReefCam =
+        new Transform3d(
+            Units.inchesToMeters(-12.0),
+            Units.inchesToMeters(0.0),
+            Units.inchesToMeters(7.75),
+            new Rotation3d(0.0, 0.0, Math.toRadians(180)));
+
+    // Basic filtering thresholds
+    public static double maxAmbiguity = 0.3;
+    public static double maxZError = 0.1;
+
+    // Standard deviation baselines, for 1 meter distance and 1 tag
+    // (Adjusted automatically based on distance and # of tags)
+    public static double linearStdDevBaseline = 0.02; // Meters
+    public static double angularStdDevBaseline = 0.06; // Radians
+
+    // Standard deviation multipliers for each camera
+    // (Adjust to trust some cameras more than others)
+    public static double[] cameraStdDevFactors = new double[] {1.0};
+
+    // Multipliers to apply for MegaTag 2 observations
+    public static double linearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve
+    public static double angularStdDevMegatag2Factor =
+        Double.POSITIVE_INFINITY; // No rotation data available
   }
 }

@@ -18,18 +18,25 @@ import org.littletonrobotics.junction.Logger;
 
 public class Arm extends SubsystemBase {
   private final TalonFX arm = new TalonFX(Constants.ARM_MOTOR_ID);
+  private final TalonFX endEffector = new TalonFX(Constants.END_EFFECTOR_ID);
+
   DutyCycleEncoder pivotEncoder = new DutyCycleEncoder(Constants.ARM_PIVOT_PORT);
   TunablePIDController armPID = new TunablePIDController(0.1, 0.0, 0.0, "/Testing/ArmPID/");
 
   /** Creates a new Arm. */
   public Arm() {
     PhoenixUtil.configMotor(arm, true, NeutralModeValue.Brake);
+    PhoenixUtil.configMotor(endEffector, false, NeutralModeValue.Coast);
     armPID.enableContinuousInput(-180, 180);
   }
 
   /** Function for voltage control for arm motor */
   public void setArmVoltage(double voltage) {
     arm.setVoltage(voltage);
+  }
+
+  public void setEndEffectorVoltage(double voltage) {
+    endEffector.setVoltage(voltage);
   }
 
   /**
@@ -81,10 +88,15 @@ public class Arm extends SubsystemBase {
         MathUtil.clamp(pidPart + ffPart, -Constants.ARM_MAX_VOLTAGE, Constants.ARM_MAX_VOLTAGE));
   }
 
+  public double getEndEffectorRPS() {
+    return endEffector.getVelocity().getValueAsDouble();
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     Logger.recordOutput("Arm/current angle", getPivotAngle());
+    Logger.recordOutput("Arm/End Effector RPS", getEndEffectorRPS());
     MechanismSimulatorActual.updateArm(getPivotAngle());
     armPID.update();
   }

@@ -17,9 +17,6 @@ public class Intake extends SubsystemBase {
   private final TalonFX intake = new TalonFX(Constants.INTAKE_MOTOR_ID);
   private final TalonFX pivot = new TalonFX(Constants.PIVOT_MOTOR_ID);
 
-  // FIXME this should not be in here this is temp
-  private final TalonFX endEffector = new TalonFX(43);
-
   private TunablePIDController intakePID =
       new TunablePIDController(0.0, 0.0, 0.0, "/Intake/IntakePID/");
   // You can dynamically tune FF you do the same thing I did with PID where I created a new class
@@ -34,11 +31,6 @@ public class Intake extends SubsystemBase {
   public Intake() {
     PhoenixUtil.configMotor(intake, false, NeutralModeValue.Coast);
     PhoenixUtil.configMotor(pivot, true, NeutralModeValue.Brake);
-  }
-
-  // FIXME this should not be in here this is temp
-  public void setEndEffectorVoltage(double voltage) {
-    endEffector.setVoltage(voltage);
   }
 
   /** Function for voltage control for intake motor */

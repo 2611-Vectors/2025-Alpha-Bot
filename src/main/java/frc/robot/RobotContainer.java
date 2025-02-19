@@ -24,9 +24,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.ArmCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeCommands;
-import frc.robot.commands.ScoreSetpoints;
 import frc.robot.commands.SetScorer;
 import frc.robot.commands.TransitionCommands;
 import frc.robot.generated.TunerConstants;
@@ -136,19 +136,18 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    // drive.setDefaultCommand(
-    //     DriveCommands.joystickDrive(
-    //         drive,
-    //         () -> -controller.getLeftY(),
-    //         () -> -controller.getLeftX(),
-    //         () -> -controller.getRightX()));
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -controller.getLeftY(),
+            () -> -controller.getLeftX(),
+            () -> -controller.getRightX()));
 
     m_Intake.setDefaultCommand(
         IntakeCommands.IntakeRPSTestCommands(
-            m_Intake,
-            () ->
-                operatorController
-                    .getLeftY())); // , () -> operatorController.getLeftY(), () -> 0.0));
+            m_Intake)); // , () -> operatorController.getLeftY(), () -> 0.0));
+    m_Arm.setDefaultCommand(
+        ArmCommands.EndEffectorController(m_Arm, () -> operatorController.getLeftY()));
     // m_Intake.setDefaultCommand(
     //     IntakeCommands.IntakeSimpleController(
     //         m_Intake, () -> operatorController.getLeftY(), () ->
@@ -158,13 +157,90 @@ public class RobotContainer {
             m_Transition)); // , () -> operatorController.getRightY()));
     operatorController.x().whileTrue(SetScorer.set(m_Elevator, m_Arm, HOME_HEIGHT_IN, HOME_ANGLE));
 
-    operatorController.a().whileTrue(new ScoreSetpoints(m_Elevator, m_Arm, L2_HEIGHT_IN, L2_ANGLE));
+    // ScoreSetpoint not working?
 
-    operatorController.b().whileTrue(new ScoreSetpoints(m_Elevator, m_Arm, L3_HEIGHT_IN, L3_ANGLE));
+    // operatorController.a().whileTrue(new ScoreSetpoints(m_Elevator, m_Arm, L2_HEIGHT_IN,
+    // L2_ANGLE));
 
-    operatorController.y().whileTrue(new ScoreSetpoints(m_Elevator, m_Arm, L4_HEIGHT_IN, L4_ANGLE));
+    // operatorController.b().whileTrue(new ScoreSetpoints(m_Elevator, m_Arm, L3_HEIGHT_IN,
+    // L3_ANGLE));
 
-    operatorController.start().whileTrue(SetScorer.set(m_Elevator, m_Arm, 35, 45));
+    // operatorController.y().whileTrue(new ScoreSetpoints(m_Elevator, m_Arm, L4_HEIGHT_IN,
+    // L4_ANGLE));
+
+    operatorController
+        .a()
+        .whileTrue(
+            Commands.sequence(
+                Commands.race(
+                    SetScorer.set(m_Elevator, m_Arm, L2_HEIGHT_IN, HOME_ANGLE),
+                    Commands.waitUntil(
+                        () ->
+                            Math.abs(L2_HEIGHT_IN - m_Elevator.getLeftElevatorPosition())
+                                < POSITION_TOLERANCE)),
+                Commands.race(
+                    SetScorer.set(m_Elevator, m_Arm, L2_HEIGHT_IN, L2_ANGLE),
+                    Commands.waitUntil(
+                        () ->
+                            Math.abs(L2_HEIGHT_IN - m_Elevator.getLeftElevatorPosition())
+                                < POSITION_TOLERANCE)),
+                Commands.parallel(
+                    Commands.run(() -> m_Arm.setEndEffectorVoltage(operatorController.getLeftY())),
+                    SetScorer.set(m_Elevator, m_Arm, L2_HEIGHT_IN, L2_ANGLE))));
+
+    operatorController
+        .b()
+        .whileTrue(
+            Commands.sequence(
+                Commands.race(
+                    SetScorer.set(m_Elevator, m_Arm, L3_HEIGHT_IN, HOME_ANGLE),
+                    Commands.waitUntil(
+                        () ->
+                            Math.abs(L3_HEIGHT_IN - m_Elevator.getLeftElevatorPosition())
+                                < POSITION_TOLERANCE)),
+                Commands.race(
+                    SetScorer.set(m_Elevator, m_Arm, L3_HEIGHT_IN, L3_ANGLE),
+                    Commands.waitUntil(
+                        () ->
+                            Math.abs(L3_HEIGHT_IN - m_Elevator.getLeftElevatorPosition())
+                                < POSITION_TOLERANCE)),
+                Commands.parallel(
+                    Commands.run(() -> m_Arm.setEndEffectorVoltage(operatorController.getLeftY())),
+                    SetScorer.set(m_Elevator, m_Arm, L3_HEIGHT_IN, L3_ANGLE))));
+
+    operatorController
+        .y()
+        .whileTrue(
+            Commands.sequence(
+                Commands.race(
+                    SetScorer.set(m_Elevator, m_Arm, L4_HEIGHT_IN, HOME_ANGLE),
+                    Commands.waitUntil(
+                        () ->
+                            Math.abs(L4_HEIGHT_IN - m_Elevator.getLeftElevatorPosition())
+                                < POSITION_TOLERANCE)),
+                Commands.race(
+                    SetScorer.set(m_Elevator, m_Arm, L4_HEIGHT_IN, L4_ANGLE),
+                    Commands.waitUntil(
+                        () ->
+                            Math.abs(L4_HEIGHT_IN - m_Elevator.getLeftElevatorPosition())
+                                < POSITION_TOLERANCE)),
+                Commands.parallel(
+                    Commands.run(() -> m_Arm.setEndEffectorVoltage(operatorController.getLeftY())),
+                    SetScorer.set(m_Elevator, m_Arm, L4_HEIGHT_IN, L4_ANGLE))));
+
+    operatorController
+        .start()
+        .whileTrue(
+            Commands.sequence(
+                Commands.race(
+                    SetScorer.set(m_Elevator, m_Arm, INTAKE_HEIGHT_IN, HOME_ANGLE),
+                    Commands.waitUntil(
+                        () ->
+                            Math.abs(INTAKE_HEIGHT_IN - m_Elevator.getLeftElevatorPosition())
+                                < POSITION_TOLERANCE)),
+                Commands.parallel(
+                    Commands.run(() -> m_Arm.setEndEffectorVoltage(operatorController.getLeftY())),
+                    SetScorer.set(m_Elevator, m_Arm, INTAKE_HEIGHT_IN, INTAKE_ANGLE))));
     operatorController
         .rightBumper()
         .whileTrue(

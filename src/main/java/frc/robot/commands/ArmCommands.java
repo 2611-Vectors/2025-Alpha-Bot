@@ -29,4 +29,8 @@ public class ArmCommands {
         },
         m_Arm);
   }
+
+  public static Command EndEffectorController(Arm m_Arm, Supplier<Double> endEffectorSupplier) {
+    return Commands.run(() -> m_Arm.setEndEffectorVoltage(endEffectorSupplier.get() * 4), m_Arm);
+  }
 }

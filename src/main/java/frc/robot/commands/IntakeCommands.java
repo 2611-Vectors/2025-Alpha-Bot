@@ -25,14 +25,12 @@ public class IntakeCommands {
         m_intake);
   }
 
-  public static Command IntakeRPSTestCommands(
-      Intake m_intake, Supplier<Double> endEffectorSupplier) {
+  public static Command IntakeRPSTestCommands(Intake m_intake) {
     LoggedNetworkNumber intakeRPS = new LoggedNetworkNumber("/Testing/IntakeRPS", 0.0);
 
     return Commands.run(
         () -> {
           m_intake.setIntakeRPS(intakeRPS.get());
-          m_intake.setEndEffectorVoltage(endEffectorSupplier.get());
         },
         m_intake);
   }

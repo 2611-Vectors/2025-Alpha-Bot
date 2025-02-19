@@ -27,12 +27,15 @@ public class ScoreSetpoints extends SequentialCommandGroup {
                 () ->
                     Math.abs(height - m_Elevator.getLeftElevatorPosition()) < POSITION_TOLERANCE)),
         Commands.race(
-            SetScorer.set(m_Elevator, m_Arm, height, angle),
+            SetScorer.set(m_Elevator, m_Arm, height, Arm.flipAngle(angle)),
             Commands.waitUntil(
                 () ->
                     Math.abs(Arm.getRelativeAngle(angle, m_Arm.getPivotAngle()))
                         < ANGLE_TOLERANCE)),
-        Commands.race(SetScorer.set(m_Elevator, m_Arm, height, angle), new WaitCommand(3)),
+        Commands.race(
+            SetScorer.set(m_Elevator, m_Arm, height, Arm.flipAngle(angle)),
+            Commands.run(() -> m_Arm.setEndEffectorVoltage(-2)),
+            new WaitCommand(5)),
         Commands.race(
             SetScorer.set(m_Elevator, m_Arm, height, HOME_ANGLE),
             Commands.waitUntil(
