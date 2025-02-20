@@ -30,13 +30,14 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 /** Add your docs here. */
 public class CustomAutoBuilder {
   public static LoggedDashboardChooser<Pose2d>[] scoreChoosers;
+  public static LoggedDashboardChooser<Double>[] lateralChoosers;
   public static LoggedDashboardChooser<Pose2d>[] loadStationChoosers;
   public static LoggedDashboardChooser<Pose2d> startChooser;
   public static LoggedDashboardChooser<Integer> displayChooser;
 
   public static Field2d m_field = new Field2d();
   public static Translation2d[] vertexs = new Translation2d[6];
-  public static int NUMBER_OF_CHOOSERS = 3;
+  public static int NUMBER_OF_CHOOSERS = 1;
 
   @SuppressWarnings("unchecked")
   public static void chooserBuilder() {
@@ -44,12 +45,16 @@ public class CustomAutoBuilder {
     displayChooser = new LoggedDashboardChooser<Integer>("Path Display");
 
     scoreChoosers = new LoggedDashboardChooser[NUMBER_OF_CHOOSERS];
+    lateralChoosers = new LoggedDashboardChooser[NUMBER_OF_CHOOSERS];
     loadStationChoosers = new LoggedDashboardChooser[NUMBER_OF_CHOOSERS - 1];
 
     // Change the number after "i < " to add to the path length. Both number MUST be
     // the same.
-    for (int i = 0; i < scoreChoosers.length; i++)
+    for (int i = 0; i < scoreChoosers.length; i++) {
       scoreChoosers[i] = new LoggedDashboardChooser<Pose2d>(String.format("Score Position %s", i));
+      lateralChoosers[i] =
+          new LoggedDashboardChooser<Double>(String.format("Lateral Chooser %s", i));
+    }
     for (int i = 0; i < loadStationChoosers.length; i++)
       loadStationChoosers[i] =
           new LoggedDashboardChooser<Pose2d>(String.format("Load Station %s", i));
@@ -73,6 +78,13 @@ public class CustomAutoBuilder {
       scoreChooser.addOption("KL", KL);
 
       scoreChooser.addDefaultOption("IJ", IJ);
+    }
+
+    for (LoggedDashboardChooser<Double> lateralChooser : lateralChoosers) {
+      lateralChooser.addOption("Right", RIGHT_OFFSET);
+      lateralChooser.addOption("Left", LEFT_OFFSET);
+
+      lateralChooser.addDefaultOption("Right", RIGHT_OFFSET);
     }
 
     for (LoggedDashboardChooser<Pose2d> loadStationChooser : loadStationChoosers) {
@@ -116,7 +128,10 @@ public class CustomAutoBuilder {
   public static void update() {
     ArrayList<Pose2d[]> paths = new ArrayList<>();
     drivePaths = new ArrayList<>();
-    startPath = getPathFromPoints(startChooser.get().getTranslation(), scoreChoosers[0].get());
+    startPath =
+        getPathFromPoints(
+            startChooser.get().getTranslation(),
+            applyOffset(scoreChoosers[0].get(), lateralChoosers[0].get()));
 
     paths.add(startPath.getPathPoses().toArray(new Pose2d[startPath.getPathPoses().size()]));
     autonPath = Commands.sequence(trajectoryDisplay(startPath), AutoBuilder.followPath(startPath));
@@ -124,10 +139,13 @@ public class CustomAutoBuilder {
         Commands.sequence(trajectoryDisplay(startPath), AutoBuilder.followPath(startPath)));
     for (int i = 0; i < scoreChoosers.length - 1; i++) {
       PathPlannerPath path1 =
-          getPathFromPoints(scoreChoosers[i].get().getTranslation(), loadStationChoosers[i].get());
+          getPathFromPoints(
+              applyOffset(scoreChoosers[i].get(), lateralChoosers[i].get()).getTranslation(),
+              loadStationChoosers[i].get());
       PathPlannerPath path2 =
           getPathFromPoints(
-              loadStationChoosers[i].get().getTranslation(), scoreChoosers[i + 1].get());
+              loadStationChoosers[i].get().getTranslation(),
+              applyOffset(scoreChoosers[i + 1].get(), lateralChoosers[i + 1].get()));
 
       paths.add(path1.getPathPoses().toArray(new Pose2d[path1.getPathPoses().size()]));
       paths.add(path2.getPathPoses().toArray(new Pose2d[path2.getPathPoses().size()]));
@@ -143,6 +161,13 @@ public class CustomAutoBuilder {
               AutoBuilder.followPath(path2));
     }
     trajectoryDisplay(paths.get(displayChooser.get()));
+  }
+
+  public static Pose2d applyOffset(Pose2d pose, double lateralOffset) {
+    double reefAngle = Math.toRadians(poseAngleMap.get(pose));
+    Translation2d positionOffset =
+        new Translation2d(lateralOffset * Math.sin(reefAngle), lateralOffset * Math.cos(reefAngle));
+    return new Pose2d(pose.getTranslation().plus(positionOffset), pose.getRotation());
   }
 
   public static Command[] getDrivePaths() {
@@ -224,13 +249,18 @@ public class CustomAutoBuilder {
                 : vertexs[intersectedPlanes.get(0) + 1];
         vertexPoint2 = endPoint;
         intersect1 = true;
+        System.out.println("------------------");
+        System.out.println(startPoint);
+        System.out.println(endPoint);
+        System.out.println(vertexPoint1);
+        System.out.println(vertexPoint2);
+        System.out.println("------------------");
       }
       case 2, 3 -> {
         int v1 = intersectedPlanes.get(0) + 1;
         int v2 = intersectedPlanes.get(0) + 2;
-
-        if ((intersectedPlanes.get(0) == 0 && intersectedPlanes.get(1) == 4)
-            || (intersectedPlanes.get(0) == 1 && intersectedPlanes.get(1) == 5)) {
+        System.out.println(v1 + ", " + v2);
+        if ((intersectedPlanes.get(0) == 1 && intersectedPlanes.get(1) == 5)) {
           v1 = 0;
           v2 = 1;
         } else if (intersectedPlanes.get(0) == 2 && intersectedPlanes.get(1) == 5) {
@@ -239,7 +269,11 @@ public class CustomAutoBuilder {
         } else if ((intersectedPlanes.get(0) == 1 && intersectedPlanes.get(1) == 4)) {
           v1 = 3;
           v2 = 4;
+        } else if ((intersectedPlanes.get(0) == 0 && intersectedPlanes.get(1) == 4)) {
+          v1 = 5;
+          v2 = 0;
         }
+        System.out.println(v1 + ", " + v2);
 
         vertexPoint1 = vertexs[v1];
         vertexPoint2 = vertexs[v2];
@@ -248,6 +282,12 @@ public class CustomAutoBuilder {
           vertexPoint1 = vertexPoint2;
           vertexPoint2 = temp;
         }
+        System.out.println("------------------");
+        System.out.println(startPoint);
+        System.out.println(endPoint);
+        System.out.println(vertexPoint1);
+        System.out.println(vertexPoint2);
+        System.out.println("------------------");
       }
       default -> {
         return waypoints;

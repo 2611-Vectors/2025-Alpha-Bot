@@ -21,6 +21,8 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -112,8 +114,22 @@ public final class Constants {
     public static final Pose2d IJ = new Pose2d(5.3, 5.3, Rotation2d.fromDegrees(-120));
     public static final Pose2d KL = new Pose2d(3.8, 5.3, Rotation2d.fromDegrees(-60));
 
+    public static final double LEFT_OFFSET = 0.5; // In Meters
+    public static final double RIGHT_OFFSET = -0.5; // In Meters
+
     public static final Pose2d R1 = new Pose2d(1.5, 6.6, Rotation2d.fromDegrees(-150));
     public static final Pose2d R0 = new Pose2d(1.5, 1.4, Rotation2d.fromDegrees(60));
+
+    public static final Map<Pose2d, Double> poseAngleMap = new HashMap<>();
+
+    static {
+      poseAngleMap.put(AB, 0.0);
+      poseAngleMap.put(CD, -60.0);
+      poseAngleMap.put(EF, -120.0);
+      poseAngleMap.put(GH, -180.0);
+      poseAngleMap.put(IJ, -240.0);
+      poseAngleMap.put(KL, -300.0);
+    }
 
     public static final double MAX_VELOCITY = 1; // 5.1
     public static final double MAX_ACCELERATION = 0.75; // 2.9
