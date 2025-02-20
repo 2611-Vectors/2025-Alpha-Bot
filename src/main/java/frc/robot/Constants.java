@@ -112,11 +112,18 @@ public final class Constants {
     public static final Pose2d IJ = new Pose2d(5.3, 5.3, Rotation2d.fromDegrees(-120));
     public static final Pose2d KL = new Pose2d(3.8, 5.3, Rotation2d.fromDegrees(-60));
 
-    public static final Pose2d R1 = new Pose2d(2, 6.1, Rotation2d.fromDegrees(-150));
+    public static final Pose2d R1 = new Pose2d(1.5, 6.6, Rotation2d.fromDegrees(-150));
     public static final Pose2d R0 = new Pose2d(1.5, 1.4, Rotation2d.fromDegrees(60));
 
     public static final double MAX_VELOCITY = 1; // 5.1
     public static final double MAX_ACCELERATION = 0.75; // 2.9
+  }
+
+  public static class FrictionConstants {
+    public static final double MU_FORWARD = 1.04191; // Friction coefficient in positive X direction
+    public static final double MU_BACKWARD = 0.9355; // Friction coefficient in negative X direction
+    public static final double MU_LEFT = 1.0; // Friction coefficient in negative Y direction
+    public static final double MU_RIGHT = 1.0; // Friction coefficient in positive Y direction
   }
 
   public static class VisionConstants {
