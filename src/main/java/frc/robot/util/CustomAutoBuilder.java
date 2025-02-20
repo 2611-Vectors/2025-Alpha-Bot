@@ -8,7 +8,6 @@ import static frc.robot.Constants.AutonConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
-import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
@@ -194,8 +193,7 @@ public class CustomAutoBuilder {
         // paths, so can
         // be null for on-the-fly paths.
         new GoalEndState(
-            0.0,
-            point2.getRotation()), // Goal end state. You can set a holonomic rotation here. If
+            0.0, point2.getRotation()), // Goal end state. You can set a holonomic rotation here. If
         // using a differential drivetrain, the rotation will have no
         // effect.
         false);
