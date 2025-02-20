@@ -249,17 +249,11 @@ public class CustomAutoBuilder {
                 : vertexs[intersectedPlanes.get(0) + 1];
         vertexPoint2 = endPoint;
         intersect1 = true;
-        System.out.println("------------------");
-        System.out.println(startPoint);
-        System.out.println(endPoint);
-        System.out.println(vertexPoint1);
-        System.out.println(vertexPoint2);
-        System.out.println("------------------");
       }
       case 2, 3 -> {
         int v1 = intersectedPlanes.get(0) + 1;
         int v2 = intersectedPlanes.get(0) + 2;
-        System.out.println(v1 + ", " + v2);
+
         if ((intersectedPlanes.get(0) == 1 && intersectedPlanes.get(1) == 5)) {
           v1 = 0;
           v2 = 1;
@@ -273,7 +267,6 @@ public class CustomAutoBuilder {
           v1 = 5;
           v2 = 0;
         }
-        System.out.println(v1 + ", " + v2);
 
         vertexPoint1 = vertexs[v1];
         vertexPoint2 = vertexs[v2];
@@ -282,12 +275,6 @@ public class CustomAutoBuilder {
           vertexPoint1 = vertexPoint2;
           vertexPoint2 = temp;
         }
-        System.out.println("------------------");
-        System.out.println(startPoint);
-        System.out.println(endPoint);
-        System.out.println(vertexPoint1);
-        System.out.println(vertexPoint2);
-        System.out.println("------------------");
       }
       default -> {
         return waypoints;
