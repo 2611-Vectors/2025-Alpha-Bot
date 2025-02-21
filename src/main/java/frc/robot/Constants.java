@@ -107,15 +107,15 @@ public final class Constants {
     public static final Pose2d START_CENTER = new Pose2d(8.0, 6.20, START_ROTATION);
     public static final Pose2d START_RIGHT = new Pose2d(8.0, 5.13, START_ROTATION);
 
-    public static final Pose2d AB = new Pose2d(3.0, 4.0, Rotation2d.fromDegrees(0));
-    public static final Pose2d CD = new Pose2d(3.7, 2.7, Rotation2d.fromDegrees(60));
-    public static final Pose2d EF = new Pose2d(5.2, 2.7, Rotation2d.fromDegrees(120));
-    public static final Pose2d GH = new Pose2d(6.0, 4.0, Rotation2d.fromDegrees(180));
-    public static final Pose2d IJ = new Pose2d(5.3, 5.3, Rotation2d.fromDegrees(-120));
-    public static final Pose2d KL = new Pose2d(3.8, 5.3, Rotation2d.fromDegrees(-60));
+    public static final Pose2d AB = new Pose2d(3.2512, 4.0259, Rotation2d.fromDegrees(0));
+    public static final Pose2d CD = new Pose2d(3.8707, 2.9543, Rotation2d.fromDegrees(60));
+    public static final Pose2d EF = new Pose2d(5.1079, 2.9543, Rotation2d.fromDegrees(120));
+    public static final Pose2d GH = new Pose2d(5.7274, 4.0259, Rotation2d.fromDegrees(180));
+    public static final Pose2d IJ = new Pose2d(5.1079, 5.0974, Rotation2d.fromDegrees(-120));
+    public static final Pose2d KL = new Pose2d(3.8707, 5.0974, Rotation2d.fromDegrees(-60));
 
-    public static final double LEFT_OFFSET = 0.5; // In Meters
-    public static final double RIGHT_OFFSET = -0.5; // In Meters
+    public static final double LEFT_OFFSET = 0.0; // In Meters
+    public static final double RIGHT_OFFSET = -0.0; // In Meters
 
     public static final Pose2d R1 = new Pose2d(1.5, 6.6, Rotation2d.fromDegrees(-150));
     public static final Pose2d R0 = new Pose2d(1.5, 1.4, Rotation2d.fromDegrees(60));
