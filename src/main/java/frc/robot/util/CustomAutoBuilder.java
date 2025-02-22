@@ -98,8 +98,8 @@ public class CustomAutoBuilder {
     for (int i = 0; i < reefPointsAngles.length; i++) {
       vertexs[i] =
           new Translation2d(
-              REEF_X_BLUE + (REEF_SIZE + 0.1) * Math.sin(reefPointsAngles[i]),
-              REEF_Y + (REEF_SIZE + 0.1) * Math.cos(reefPointsAngles[i]));
+              REEF_X_BLUE + (REEF_SIZE + 0.5) * Math.sin(reefPointsAngles[i]),
+              REEF_Y + (REEF_SIZE + 0.5) * Math.cos(reefPointsAngles[i]));
     }
   }
 

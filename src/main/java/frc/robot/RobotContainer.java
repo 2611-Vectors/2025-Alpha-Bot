@@ -82,6 +82,7 @@ public class RobotContainer {
                     VisionConstants.reefCamName, VisionConstants.robotToReefCam),
                 new VisionIOPhotonVision(
                     VisionConstants.loadStationCamName, VisionConstants.robotToLoadStationCam));
+
         break;
 
       case SIM:
@@ -99,7 +100,7 @@ public class RobotContainer {
                 new VisionIOPhotonVisionSim(
                     VisionConstants.reefCamName, VisionConstants.robotToReefCam, drive::getPose),
                 new VisionIOPhotonVisionSim(
-                    VisionConstants.reefCamName,
+                    VisionConstants.loadStationCamName,
                     VisionConstants.robotToLoadStationCam,
                     drive::getPose));
         break;
