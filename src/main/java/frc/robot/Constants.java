@@ -44,14 +44,14 @@ public final class Constants {
     REPLAY
   }
 
-  public static int LEFT_ELEVATOR_ID = 40;
-  public static int RIGHT_ELEVATOR_ID = 41;
+  public static final int LEFT_ELEVATOR_ID = 40;
+  public static final int RIGHT_ELEVATOR_ID = 41;
 
-  public static double ELEVATOR_P = 4;
+  public static double ELEVATOR_P = 3;
   public static double ELEVATOR_I = 0.01;
   public static double ELEVATOR_D = 0;
 
-  public static double ELEVATOR_MAX_VOLTAGE = 1.0; // Set this to 8 for competition
+  public static final double ELEVATOR_MAX_VOLTAGE = 3.0; // Set this to 8 for competition
 
   // Constants for the elevator motor system
   public static final double ELEVATOR_GEAR_RATIO = 4.0;
@@ -70,12 +70,16 @@ public final class Constants {
   public static final double INTAKE_EXTENDED = 15.0;
   public static final double INTAKE_RETRACTED = 1.0;
 
+  // Climber Constants
+  public static final int CLIMB_WINCH_ID = 51;
+  public static final int CLIMB_GRAB_ID = 52;
+
   // Arm Constants
   public static final int ARM_MOTOR_ID = 44;
   public static final int ARM_PIVOT_PORT = 0;
   public static final int PIVOT_ANGLE_OFFSET = -90;
   public static final double ARM_GEAR_RATIO = 43.95;
-  public static final double ARM_MAX_VOLTAGE = 1.0; // Set this to 8 for competition
+  public static final double ARM_MAX_VOLTAGE = 1.5; // Set this to 8 for competition
 
   public static final int END_EFFECTOR_ID = 43;
 
@@ -86,14 +90,14 @@ public final class Constants {
   public static class Setpoints {
     public static final double HOME_HEIGHT_IN = 1.0;
     public static final double L2_HEIGHT_IN = 7.0;
-    public static final double L3_HEIGHT_IN = 13.0;
-    public static final double L4_HEIGHT_IN = 54.0;
-    public static final double INTAKE_HEIGHT_IN = 28.50;
+    public static final double L3_HEIGHT_IN = 21.0;
+    public static final double L4_HEIGHT_IN = 61.0;
+    public static final double INTAKE_HEIGHT_IN = 28.25;
 
     public static final double HOME_ANGLE = -90;
     public static final double L2_ANGLE = -55;
-    public static final double L3_ANGLE = -35;
-    public static final double L4_ANGLE = 0;
+    public static final double L3_ANGLE = -55;
+    public static final double L4_ANGLE = -5;
     public static final double INTAKE_ANGLE = 45.0;
 
     public static final double POSITION_TOLERANCE = 1.0;

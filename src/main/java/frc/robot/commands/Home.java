@@ -8,35 +8,31 @@ import static frc.robot.Constants.Setpoints.*;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Mechanisms.Arm;
 import frc.robot.subsystems.Mechanisms.Elevator;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ScoreSetpoints extends SequentialCommandGroup {
-  /** Creates a new ScoreSetpoints. */
-  public ScoreSetpoints(Elevator m_Elevator, Arm m_Arm, double height, double angle) {
+public class Home extends SequentialCommandGroup {
+  /** Creates a new Home. */
+  public Home(Elevator m_Elevator, Arm m_Arm) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
         Commands.race(
-            SetScorer.set(m_Elevator, m_Arm, height, HOME_ANGLE),
+            Commands.sequence(
+                Commands.run(() -> m_Arm.setPivotAngle(HOME_ANGLE)),
+                Commands.run(() -> m_Elevator.setVoltage(m_Elevator.elevatorFF.getKg()))),
             Commands.waitUntil(
                 () ->
-                    Math.abs(height - m_Elevator.getLeftElevatorPosition()) < POSITION_TOLERANCE)),
-        Commands.race(
-            Commands.run(() -> m_Arm.setEndEffectorVoltage(1)),
-            SetScorer.set(m_Elevator, m_Arm, height, Arm.flipAngle(angle)),
-            Commands.waitUntil(
-                () ->
-                    Math.abs(Arm.getRelativeAngle(Arm.flipAngle(angle), m_Arm.getPivotAngle()))
+                    Math.abs(Arm.getRelativeAngle(HOME_ANGLE, m_Arm.getPivotAngle()))
                         < ANGLE_TOLERANCE)),
         Commands.race(
-            SetScorer.set(m_Elevator, m_Arm, height, Arm.flipAngle(angle)),
-            Commands.run(() -> m_Arm.setEndEffectorVoltage(-2)),
-            new WaitCommand(2)),
-        new Home(m_Elevator, m_Arm));
+            SetScorer.set(m_Elevator, m_Arm, HOME_HEIGHT_IN, HOME_ANGLE),
+            Commands.waitUntil(
+                () ->
+                    Math.abs(HOME_HEIGHT_IN - m_Elevator.getLeftElevatorPosition())
+                        < POSITION_TOLERANCE)));
   }
 }

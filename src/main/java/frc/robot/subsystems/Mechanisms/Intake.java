@@ -52,7 +52,6 @@ public class Intake extends SubsystemBase {
   public double getIntakeVelocity() {
     return intake.getVelocity().getValueAsDouble();
   }
-
   /**
    * Sets the Intake to a target velocity and should be called periodically unit are in revolution
    * per second

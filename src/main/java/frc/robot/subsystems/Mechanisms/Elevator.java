@@ -51,7 +51,9 @@ public class Elevator extends SubsystemBase {
 
     setVoltage(
         MathUtil.clamp(
-            pidPart + ffPart, -Constants.ELEVATOR_MAX_VOLTAGE, Constants.ELEVATOR_MAX_VOLTAGE));
+            pidPart + ffPart,
+            -Constants.ELEVATOR_MAX_VOLTAGE * 0.5,
+            Constants.ELEVATOR_MAX_VOLTAGE));
   }
 
   /**

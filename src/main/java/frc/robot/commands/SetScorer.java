@@ -21,7 +21,7 @@ public class SetScorer {
             m_Arm)
         .finallyDo(
             () -> {
-              m_Elevator.setVoltage(0.0);
+              m_Elevator.setVoltage(m_Elevator.elevatorFF.getKg());
               m_Arm.setArmVoltage(0.0);
             });
   }
