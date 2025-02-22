@@ -5,9 +5,9 @@
 package frc.robot.commands.Autons;
 
 import static frc.robot.Constants.Setpoints.*;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.ScoreSetpoints;
 import frc.robot.subsystems.Mechanisms.Arm;
 import frc.robot.subsystems.Mechanisms.Elevator;
 import frc.robot.util.CustomAutoBuilder;
@@ -21,7 +21,6 @@ public class L4Auton extends SequentialCommandGroup {
   public L4Auton(Elevator m_Elevator, Arm m_Arm) {
     Command[] drivePaths = CustomAutoBuilder.getDrivePaths();
     Command autoCommand = drivePaths[0];
-    autoCommand.andThen(new ScoreSetpoints(m_Elevator, m_Arm, L4_HEIGHT_IN, L4_ANGLE));
-    addCommands(autoCommand);
+    addCommands(autoCommand); // , new ScoreSetpoints(m_Elevator, m_Arm, L4_HEIGHT_IN, L4_ANGLE));
   }
 }

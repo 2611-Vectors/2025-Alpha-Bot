@@ -75,8 +75,7 @@ public class Arm extends SubsystemBase {
   }
 
   /**
-   * Sets the Arm Pivot to a target position and should be called periodically
-   * unit are in degrees
+   * Sets the Arm Pivot to a target position and should be called periodically unit are in degrees
    */
   public void setPivotAngle(double angle) {
     Logger.recordOutput("Arm/TargetAngle", angle);

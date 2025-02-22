@@ -25,10 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class defines the runtime mode used by AdvantageKit. The mode is always
- * "real" when running
- * on a roboRIO. Change the value of "simMode" to switch between "sim" (physics
- * sim) and "replay"
+ * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
+ * on a roboRIO. Change the value of "simMode" to switch between "sim" (physics sim) and "replay"
  * (log replay from a file).
  */
 public final class Constants {
@@ -60,7 +58,8 @@ public final class Constants {
   public static final double STRING_HOUSING_DIAMETER = 2.1702;
 
   // Conversion factor from motor rotations to inches of travel
-  public static final double ROTATIONS_TO_INCHES = (Math.PI * STRING_HOUSING_DIAMETER) / ELEVATOR_GEAR_RATIO;
+  public static final double ROTATIONS_TO_INCHES =
+      (Math.PI * STRING_HOUSING_DIAMETER) / ELEVATOR_GEAR_RATIO;
 
   // Transition Code
   public static final int TRANSITION_ID = 31;
@@ -103,28 +102,30 @@ public final class Constants {
     public static final double L4_ANGLE = -5;
     public static final double INTAKE_ANGLE = 45.0;
 
+    // 19 inches tall
+
     public static final double POSITION_TOLERANCE = 1.0;
     public static final double ANGLE_TOLERANCE = 3.0;
   }
 
   public static class AutonConstants {
-    public static final Rotation2d START_ROTATION = Rotation2d.fromDegrees(0); // 180
+    public static final Rotation2d START_ROTATION = Rotation2d.fromDegrees(0);
 
-    public static final Pose2d START_LEFT = new Pose2d(8.0, 7.29, START_ROTATION);
+    public static final Pose2d START_LEFT = new Pose2d(8.0, 2.21, START_ROTATION);
     public static final Pose2d START_CENTER = new Pose2d(8.0, 6.20, START_ROTATION);
-    public static final Pose2d START_RIGHT = new Pose2d(8.0, 5.13, START_ROTATION);
+    public static final Pose2d START_RIGHT = new Pose2d(8.0, 7.29, START_ROTATION);
 
-    public static final Pose2d AB = new Pose2d(3.2512, 4.0259, Rotation2d.fromDegrees(0));
-    public static final Pose2d CD = new Pose2d(3.8707, 2.9543, Rotation2d.fromDegrees(60));
-    public static final Pose2d EF = new Pose2d(5.1079, 2.9543, Rotation2d.fromDegrees(120));
-    public static final Pose2d GH = new Pose2d(5.7274, 4.0259, Rotation2d.fromDegrees(180));
-    public static final Pose2d IJ = new Pose2d(5.1079, 5.0974, Rotation2d.fromDegrees(-120));
-    public static final Pose2d KL = new Pose2d(3.8707, 5.0974, Rotation2d.fromDegrees(-60));
+    public static final Pose2d AB = new Pose2d(3.2512, 4.0259, Rotation2d.fromDegrees(180));
+    public static final Pose2d CD = new Pose2d(3.8707, 2.9543, Rotation2d.fromDegrees(-120));
+    public static final Pose2d EF = new Pose2d(5.1079, 2.9543, Rotation2d.fromDegrees(-60));
+    public static final Pose2d GH = new Pose2d(5.7274, 4.0259, Rotation2d.fromDegrees(0));
+    public static final Pose2d IJ = new Pose2d(5.1079, 5.0974, Rotation2d.fromDegrees(60));
+    public static final Pose2d KL = new Pose2d(3.8707, 5.0974, Rotation2d.fromDegrees(120));
 
-    public static final double LEFT_OFFSET = 0.0; // In Meters
-    public static final double RIGHT_OFFSET = -0.0; // In Meters
+    public static final double LEFT_OFFSET = 0.21; // In Meters
+    public static final double RIGHT_OFFSET = -0.13; // In Meters
 
-    public static final Pose2d R1 = new Pose2d(1.5, 6.6, Rotation2d.fromDegrees(-150));
+    public static final Pose2d R1 = new Pose2d(1.13847, 7.10903, Rotation2d.fromDegrees(-150));
     public static final Pose2d R0 = new Pose2d(1.5, 1.4, Rotation2d.fromDegrees(60));
 
     public static final Map<Pose2d, Double> poseAngleMap = new HashMap<>();
@@ -151,17 +152,29 @@ public final class Constants {
 
   public static class VisionConstants {
     // Apriltag Field Layout
-    public static AprilTagFieldLayout aprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+    public static AprilTagFieldLayout aprilTagLayout =
+        AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
 
     // Name of the PhotonVision Reef Camera
-    public static String reefCamName = "ReefTagCam";
+    public static String reefCamName = "ApriltagReefCam";
 
     // Position of the PhotonVision Reef Camera
-    public static Transform3d robotToReefCam = new Transform3d(
-        Units.inchesToMeters(-9.5),
-        Units.inchesToMeters(-10.5),
-        Units.inchesToMeters(24),
-        new Rotation3d(0.0, Math.toRadians(-45), Math.toRadians(180)));
+    public static Transform3d robotToReefCam =
+        new Transform3d(
+            Units.inchesToMeters(-9.5),
+            Units.inchesToMeters(-10.5),
+            Units.inchesToMeters(22),
+            new Rotation3d(0.0, Math.toRadians(45), Math.toRadians(180)));
+
+    public static String loadStationCamName = "ApriltagLoadStation";
+
+    // Position of the PhotonVision Reef Camera
+    public static Transform3d robotToLoadStationCam =
+        new Transform3d(
+            Units.inchesToMeters(9.5),
+            Units.inchesToMeters(-10.5),
+            Units.inchesToMeters(27.5),
+            new Rotation3d(0.0, Math.toRadians(-45), Math.toRadians(180)));
 
     // Basic filtering thresholds
     public static double maxAmbiguity = 0.3;
@@ -174,10 +187,11 @@ public final class Constants {
 
     // Standard deviation multipliers for each camera
     // (Adjust to trust some cameras more than others)
-    public static double[] cameraStdDevFactors = new double[] { 1.0 };
+    public static double[] cameraStdDevFactors = new double[] {1.0};
 
     // Multipliers to apply for MegaTag 2 observations
     public static double linearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve
-    public static double angularStdDevMegatag2Factor = Double.POSITIVE_INFINITY; // No rotation data available
+    public static double angularStdDevMegatag2Factor =
+        Double.POSITIVE_INFINITY; // No rotation data available
   }
 }

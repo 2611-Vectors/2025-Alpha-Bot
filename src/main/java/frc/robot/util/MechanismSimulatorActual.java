@@ -11,16 +11,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.Constants;
-
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 /** Add your docs here. */
 public class MechanismSimulatorActual {
   static Mechanism2d elevatorMech = new Mechanism2d(3, 3);
   static MechanismRoot2d elevatorRoot = elevatorMech.getRoot("Elevator", 1.5, 0);
-  static MechanismLigament2d m_elevator = elevatorRoot.append(new MechanismLigament2d("elevator", 1, 90));
-  static MechanismLigament2d m_arm = m_elevator.append(
-      new MechanismLigament2d("wrist", 0.4572, 90, 6, new Color8Bit(Color.kPurple)));
+  static MechanismLigament2d m_elevator =
+      elevatorRoot.append(new MechanismLigament2d("elevator", 1, 90));
+  static MechanismLigament2d m_arm =
+      m_elevator.append(
+          new MechanismLigament2d("wrist", 0.4572, 90, 6, new Color8Bit(Color.kPurple)));
 
   static LoggedNetworkNumber elevatorPosition, wristAngle;
 
@@ -39,6 +40,7 @@ public class MechanismSimulatorActual {
   }
 
   public static double actualArmHeight() {
-    return Constants.ARM_LENGTH * (-Math.sin(Math.toRadians(m_arm.getAngle()))) + m_elevator.getLength();
+    return Constants.ARM_LENGTH * (-Math.sin(Math.toRadians(m_arm.getAngle())))
+        + m_elevator.getLength();
   }
 }

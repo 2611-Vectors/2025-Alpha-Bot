@@ -26,7 +26,6 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -50,7 +49,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstants;
-import frc.robot.util.Friction;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -105,16 +103,7 @@ public class Drive extends SubsystemBase {
         new SwerveModulePosition(),
         new SwerveModulePosition()
       };
-  private SwerveModulePosition[] correctedLastModulePositions = // For delta tracking
-      new SwerveModulePosition[] {
-        new SwerveModulePosition(),
-        new SwerveModulePosition(),
-        new SwerveModulePosition(),
-        new SwerveModulePosition()
-      };
   private SwerveDrivePoseEstimator poseEstimator =
-      new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
-  public SwerveDrivePoseEstimator noVision =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
   public Drive(
@@ -200,9 +189,6 @@ public class Drive extends SubsystemBase {
       // Read wheel positions and deltas from each module
       SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
       SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
-
-      SwerveModulePosition[] correctedModulePositions = new SwerveModulePosition[4];
-      SwerveModulePosition[] correctedModuleDeltas = new SwerveModulePosition[4];
       for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
         modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
         moduleDeltas[moduleIndex] =
@@ -210,32 +196,6 @@ public class Drive extends SubsystemBase {
                 modulePositions[moduleIndex].distanceMeters
                     - lastModulePositions[moduleIndex].distanceMeters,
                 modulePositions[moduleIndex].angle);
-        double robotAngle = getPose().getRotation().getDegrees();
-        double moduleAngle =
-            MathUtil.inputModulus(modulePositions[moduleIndex].angle.getDegrees(), -180, 180);
-        if (modules[moduleIndex].getState().speedMetersPerSecond < 0) {
-          moduleAngle = MathUtil.inputModulus(moduleAngle + 180, -180, 180);
-        }
-        double moduleAbsoluteAngle = MathUtil.inputModulus(robotAngle + moduleAngle, 0, 360);
-        double friction = Friction.getFriction(moduleAbsoluteAngle);
-
-        correctedModulePositions[moduleIndex] =
-            new SwerveModulePosition(
-                correctedLastModulePositions[moduleIndex].distanceMeters
-                    + moduleDeltas[moduleIndex].distanceMeters,
-                modulePositions[moduleIndex].angle);
-        correctedModuleDeltas[moduleIndex] =
-            new SwerveModulePosition(
-                moduleDeltas[moduleIndex].distanceMeters, moduleDeltas[moduleIndex].angle);
-
-        correctedModuleDeltas[moduleIndex].distanceMeters =
-            moduleDeltas[moduleIndex].distanceMeters * friction;
-
-        correctedModulePositions[moduleIndex].distanceMeters =
-            correctedLastModulePositions[moduleIndex].distanceMeters
-                + correctedModuleDeltas[moduleIndex].distanceMeters;
-
-        correctedLastModulePositions[moduleIndex] = correctedModulePositions[moduleIndex];
         lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
       }
 
@@ -243,16 +203,14 @@ public class Drive extends SubsystemBase {
       if (gyroInputs.connected) {
         // Use the real gyro angle
         rawGyroRotation = gyroInputs.odometryYawPositions[i];
-        noVision.updateWithTime(sampleTimestamps[i], rawGyroRotation, correctedModulePositions);
       } else {
         // Use the angle delta from the kinematics and module deltas
-        Twist2d twist = kinematics.toTwist2d(correctedModulePositions);
+        Twist2d twist = kinematics.toTwist2d(moduleDeltas);
         rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
       }
 
       // Apply update
-      poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, correctedModulePositions);
-      Logger.recordOutput("PLZ WORK", noVision.getEstimatedPosition());
+      poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
     }
 
     // Update gyro alert
@@ -377,10 +335,6 @@ public class Drive extends SubsystemBase {
   /** Resets the current odometry pose. */
   public void setPose(Pose2d pose) {
     poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
-  }
-
-  public void noVision(Pose2d pose) {
-    noVision.resetPosition(rawGyroRotation, getModulePositions(), pose);
   }
 
   /** Adds a new timestamped vision measurement. */

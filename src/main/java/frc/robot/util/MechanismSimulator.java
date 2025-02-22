@@ -12,9 +12,6 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.Constants;
 import frc.robot.subsystems.Mechanisms.Arm;
-
-import java.util.DuplicateFormatFlagsException;
-
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 // COMBINE WITH MECHANISMsIMULATORaCTUAL
@@ -26,9 +23,10 @@ public class MechanismSimulator {
 
   static Mechanism2d elevatorMech = new Mechanism2d(3, 3);
   static MechanismRoot2d elevatorRoot = elevatorMech.getRoot("Elevator", 1.5, 0);
-  static MechanismLigament2d m_elevator = elevatorRoot.append(new MechanismLigament2d("elevator", 1, 90));
-  static MechanismLigament2d m_arm = m_elevator.append(
-      new MechanismLigament2d("arm", 0.6, 0, 6, new Color8Bit(Color.kPurple)));
+  static MechanismLigament2d m_elevator =
+      elevatorRoot.append(new MechanismLigament2d("elevator", 1, 90));
+  static MechanismLigament2d m_arm =
+      m_elevator.append(new MechanismLigament2d("arm", 0.6, 0, 6, new Color8Bit(Color.kPurple)));
 
   static LoggedNetworkNumber elevatorPosition, wristAngle;
 
@@ -40,7 +38,6 @@ public class MechanismSimulator {
 
   public static void updateArm(double angle) {
     m_arm.setAngle(Arm.flipAngle(angle + 90));
-
   }
 
   public static void updateElevator(double position) {
@@ -48,11 +45,14 @@ public class MechanismSimulator {
   }
 
   public static boolean isLegalTarget() {
-    double armHeight = Constants.ARM_LENGTH * (-Math.sin(Math.toRadians(m_arm.getAngle()))) + m_elevator.getLength();
+    double armHeight =
+        Constants.ARM_LENGTH * (-Math.sin(Math.toRadians(m_arm.getAngle())))
+            + m_elevator.getLength();
     return armHeight > 0.3;
   }
 
   public static double targetArmHeight() {
-    return Constants.ARM_LENGTH * (-Math.sin(Math.toRadians(m_arm.getAngle()))) + m_elevator.getLength();
+    return Constants.ARM_LENGTH * (-Math.sin(Math.toRadians(m_arm.getAngle())))
+        + m_elevator.getLength();
   }
 }
