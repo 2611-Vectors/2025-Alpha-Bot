@@ -25,8 +25,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
- * on a roboRIO. Change the value of "simMode" to switch between "sim" (physics sim) and "replay"
+ * This class defines the runtime mode used by AdvantageKit. The mode is always
+ * "real" when running
+ * on a roboRIO. Change the value of "simMode" to switch between "sim" (physics
+ * sim) and "replay"
  * (log replay from a file).
  */
 public final class Constants {
@@ -58,8 +60,7 @@ public final class Constants {
   public static final double STRING_HOUSING_DIAMETER = 2.1702;
 
   // Conversion factor from motor rotations to inches of travel
-  public static final double ROTATIONS_TO_INCHES =
-      (Math.PI * STRING_HOUSING_DIAMETER) / ELEVATOR_GEAR_RATIO;
+  public static final double ROTATIONS_TO_INCHES = (Math.PI * STRING_HOUSING_DIAMETER) / ELEVATOR_GEAR_RATIO;
 
   // Transition Code
   public static final int TRANSITION_ID = 31;
@@ -80,6 +81,8 @@ public final class Constants {
   public static final int PIVOT_ANGLE_OFFSET = -90;
   public static final double ARM_GEAR_RATIO = 43.95;
   public static final double ARM_MAX_VOLTAGE = 1.5; // Set this to 8 for competition
+  public static final double ARM_LENGTH = 0.6;
+  public static final double LOWEST_HEIGHT = 0.3;
 
   public static final int END_EFFECTOR_ID = 43;
 
@@ -148,19 +151,17 @@ public final class Constants {
 
   public static class VisionConstants {
     // Apriltag Field Layout
-    public static AprilTagFieldLayout aprilTagLayout =
-        AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+    public static AprilTagFieldLayout aprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
 
     // Name of the PhotonVision Reef Camera
     public static String reefCamName = "ReefTagCam";
 
     // Position of the PhotonVision Reef Camera
-    public static Transform3d robotToReefCam =
-        new Transform3d(
-            Units.inchesToMeters(-12.0),
-            Units.inchesToMeters(0.0),
-            Units.inchesToMeters(7.75),
-            new Rotation3d(0.0, 0.0, Math.toRadians(180)));
+    public static Transform3d robotToReefCam = new Transform3d(
+        Units.inchesToMeters(-9.5),
+        Units.inchesToMeters(-10.5),
+        Units.inchesToMeters(24),
+        new Rotation3d(0.0, Math.toRadians(-45), Math.toRadians(180)));
 
     // Basic filtering thresholds
     public static double maxAmbiguity = 0.3;
@@ -173,11 +174,10 @@ public final class Constants {
 
     // Standard deviation multipliers for each camera
     // (Adjust to trust some cameras more than others)
-    public static double[] cameraStdDevFactors = new double[] {1.0};
+    public static double[] cameraStdDevFactors = new double[] { 1.0 };
 
     // Multipliers to apply for MegaTag 2 observations
     public static double linearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve
-    public static double angularStdDevMegatag2Factor =
-        Double.POSITIVE_INFINITY; // No rotation data available
+    public static double angularStdDevMegatag2Factor = Double.POSITIVE_INFINITY; // No rotation data available
   }
 }

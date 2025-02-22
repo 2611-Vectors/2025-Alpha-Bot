@@ -16,31 +16,29 @@ import frc.robot.subsystems.Mechanisms.Elevator;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class LoadStationIntake extends SequentialCommandGroup {
-  /** Creates a new LoadStationIntake. */
-  public LoadStationIntake(Elevator m_Elevator, Arm m_Arm) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
-    addCommands(
-        Commands.race(
-            SetScorer.set(m_Elevator, m_Arm, INTAKE_HEIGHT_IN, HOME_ANGLE),
-            Commands.waitUntil(
-                () ->
-                    Math.abs(INTAKE_HEIGHT_IN - m_Elevator.getLeftElevatorPosition())
-                        < POSITION_TOLERANCE)),
-        Commands.race(
-            SetScorer.set(m_Elevator, m_Arm, INTAKE_HEIGHT_IN, INTAKE_ANGLE),
-            Commands.waitUntil(
-                () ->
-                    Math.abs(Arm.getRelativeAngle(INTAKE_ANGLE, m_Arm.getPivotAngle()))
-                        < ANGLE_TOLERANCE)),
-        Commands.race(
-            SetScorer.set(m_Elevator, m_Arm, INTAKE_HEIGHT_IN, INTAKE_ANGLE),
-            Commands.run(() -> m_Arm.setEndEffectorVoltage(2)),
-            new WaitCommand(1.0)),
-        Commands.race(
-            SetScorer.set(m_Elevator, m_Arm, INTAKE_HEIGHT_IN, INTAKE_ANGLE),
-            Commands.run(() -> m_Arm.setEndEffectorVoltage(2)),
-            Commands.waitUntil(() -> Math.abs(m_Arm.getEndEffectorRPS()) < 13.0)),
-        SetScorer.set(m_Elevator, m_Arm, INTAKE_HEIGHT_IN, INTAKE_ANGLE));
-  }
+    /** Creates a new LoadStationIntake. */
+    public LoadStationIntake(Elevator m_Elevator, Arm m_Arm) {
+        // Add your commands in the addCommands() call, e.g.
+        // addCommands(new FooCommand(), new BarCommand());
+        addCommands(
+                Commands.race(
+                        SetScorer.set(m_Elevator, m_Arm, INTAKE_HEIGHT_IN, HOME_ANGLE),
+                        Commands.waitUntil(
+                                () -> Math.abs(
+                                        INTAKE_HEIGHT_IN - m_Elevator.getLeftElevatorPosition()) < POSITION_TOLERANCE)),
+                Commands.race(
+                        SetScorer.set(m_Elevator, m_Arm, INTAKE_HEIGHT_IN, INTAKE_ANGLE),
+                        Commands.waitUntil(
+                                () -> Math.abs(
+                                        Arm.getRelativeAngle(INTAKE_ANGLE, m_Arm.getPivotAngle())) < ANGLE_TOLERANCE)),
+                Commands.race(
+                        SetScorer.set(m_Elevator, m_Arm, INTAKE_HEIGHT_IN, INTAKE_ANGLE),
+                        Commands.run(() -> m_Arm.setEndEffectorVoltage(2)),
+                        Commands.waitUntil(() -> Math.abs(m_Arm.getEndEffectorRPS()) > 13.0)),
+                Commands.race(
+                        SetScorer.set(m_Elevator, m_Arm, INTAKE_HEIGHT_IN, INTAKE_ANGLE),
+                        Commands.run(() -> m_Arm.setEndEffectorVoltage(2)),
+                        Commands.waitUntil(() -> Math.abs(m_Arm.getEndEffectorRPS()) < 13.0)),
+                SetScorer.set(m_Elevator, m_Arm, INTAKE_HEIGHT_IN, INTAKE_ANGLE));
+    }
 }
