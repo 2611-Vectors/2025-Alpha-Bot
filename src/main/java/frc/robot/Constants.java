@@ -156,25 +156,44 @@ public final class Constants {
         AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
 
     // Name of the PhotonVision Reef Camera
-    public static String reefCamName = "ApriltagReefCam";
+    public static String BackRightCam = "BackRightCam";
 
     // Position of the PhotonVision Reef Camera
-    public static Transform3d robotToReefCam =
+    public static Transform3d robotToBackRightCam =
         new Transform3d(
-            Units.inchesToMeters(-9.5),
-            Units.inchesToMeters(-10.5),
-            Units.inchesToMeters(22),
-            new Rotation3d(0.0, Math.toRadians(45), Math.toRadians(180)));
+            Units.inchesToMeters(-10),
+            Units.inchesToMeters(-11),
+            Units.inchesToMeters(8.5),
+            new Rotation3d(0.0, Math.toRadians(-45), Math.toRadians(21)));
 
-    public static String loadStationCamName = "ApriltagLoadStation";
+    public static String BackLeftCam = "BackLeftCam";
 
     // Position of the PhotonVision Reef Camera
-    public static Transform3d robotToLoadStationCam =
+    public static Transform3d robotToBackLeftCam =
         new Transform3d(
-            Units.inchesToMeters(9.5),
+            Units.inchesToMeters(-11),
+            Units.inchesToMeters(10.5),
+            Units.inchesToMeters(35),
+            new Rotation3d(0.0, Math.toRadians(-1), Math.toRadians(135)));
+
+    public static String FrontLeftCam = "FrontLeftCam";
+
+    // Position of the PhotonVision Reef Camera
+    public static Transform3d robotToFrontLeftCam =
+        new Transform3d(
+            Units.inchesToMeters(11),
+            Units.inchesToMeters(10.5),
+            Units.inchesToMeters(34),
+            new Rotation3d(0.0, Math.toRadians(1), Math.toRadians(45)));
+
+    public static String FrontRightCam = "FrontRightCam";
+    // Position of the PhotonVision Reef Camera
+    public static Transform3d robotToFrontRightCam =
+        new Transform3d(
+            Units.inchesToMeters(11),
             Units.inchesToMeters(-10.5),
-            Units.inchesToMeters(27.5),
-            new Rotation3d(0.0, Math.toRadians(-45), Math.toRadians(0)));
+            Units.inchesToMeters(9),
+            new Rotation3d(0.0, Math.toRadians(-9), Math.toRadians(160)));
 
     // Basic filtering thresholds
     public static double maxAmbiguity = 0.3;

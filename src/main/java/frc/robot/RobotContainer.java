@@ -79,9 +79,13 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
-                    VisionConstants.reefCamName, VisionConstants.robotToReefCam),
+                    VisionConstants.BackRightCam, VisionConstants.robotToBackRightCam),
                 new VisionIOPhotonVision(
-                    VisionConstants.loadStationCamName, VisionConstants.robotToLoadStationCam));
+                    VisionConstants.FrontRightCam, VisionConstants.robotToFrontRightCam)
+                //     ,
+                // new VisionIOPhotonVision(
+                //     VisionConstants.BackLeftCam, VisionConstants.robotToFrontLeftCam)
+                );
 
         break;
 
@@ -98,11 +102,19 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVisionSim(
-                    VisionConstants.reefCamName, VisionConstants.robotToReefCam, drive::getPose),
+                    VisionConstants.BackRightCam,
+                    VisionConstants.robotToBackRightCam,
+                    drive::getPose),
                 new VisionIOPhotonVisionSim(
-                    VisionConstants.loadStationCamName,
-                    VisionConstants.robotToLoadStationCam,
-                    drive::getPose));
+                    VisionConstants.FrontRightCam,
+                    VisionConstants.robotToFrontRightCam,
+                    drive::getPose)
+                //     ,
+                // new VisionIOPhotonVisionSim(
+                //     VisionConstants.BackLeftCam,
+                //     VisionConstants.robotToBackLeftCam,
+                //     drive::getPose)
+                );
         break;
 
       default:
