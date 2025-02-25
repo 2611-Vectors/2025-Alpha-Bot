@@ -81,9 +81,9 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
-                    VisionConstants.BackRightCam, VisionConstants.robotToBackRightCam),
-                new VisionIOPhotonVision(
-                    VisionConstants.FrontRightCam, VisionConstants.robotToFrontRightCam)
+                    VisionConstants.BackRightCam, VisionConstants.robotToBackRightCam) // ,
+                // new VisionIOPhotonVision(
+                //     VisionConstants.FrontRightCam, VisionConstants.robotToFrontRightCam)
                 //     ,
                 // new VisionIOPhotonVision(
                 //     VisionConstants.BackLeftCam, VisionConstants.robotToFrontLeftCam)
@@ -106,11 +106,11 @@ public class RobotContainer {
                 new VisionIOPhotonVisionSim(
                     VisionConstants.BackRightCam,
                     VisionConstants.robotToBackRightCam,
-                    drive::getPose),
-                new VisionIOPhotonVisionSim(
-                    VisionConstants.FrontRightCam,
-                    VisionConstants.robotToFrontRightCam,
-                    drive::getPose)
+                    drive::getPose) // ,
+                // new VisionIOPhotonVisionSim(
+                //     VisionConstants.FrontRightCam,
+                //     VisionConstants.robotToFrontRightCam,
+                //     drive::getPose)
                 //     ,
                 // new VisionIOPhotonVisionSim(
                 //     VisionConstants.BackLeftCam,
@@ -172,9 +172,9 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> controller.getLeftY(),
-            () -> controller.getLeftX(),
-            () -> controller.getRightX()));
+            () -> -controller.getLeftY(),
+            () -> -controller.getLeftX(),
+            () -> -controller.getRightX()));
 
     operatorController
         .rightTrigger(0.1)
