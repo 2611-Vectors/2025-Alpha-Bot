@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Mechanisms.Climb;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -53,6 +54,7 @@ public class RobotContainer {
   //   private final Transition m_Transition;
   //   private final Elevator m_Elevator;
   //   private final Arm m_Arm;
+  private final Climb m_Climb;
 
   private final Vision m_Vision;
 
@@ -134,6 +136,7 @@ public class RobotContainer {
     // m_Transition = new Transition();
     // m_Elevator = new Elevator();
     // m_Arm = new Arm();
+    m_Climb = new Climb();
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -172,6 +175,20 @@ public class RobotContainer {
             () -> controller.getLeftY(),
             () -> controller.getLeftX(),
             () -> controller.getRightX()));
+
+    operatorController
+        .rightTrigger(0.1)
+        .or(operatorController.leftTrigger(0.1))
+        .whileTrue(
+            m_Climb.runWinch(
+                () -> operatorController.getLeftTriggerAxis(),
+                () -> operatorController.getRightTriggerAxis()))
+        .whileFalse(Commands.run(() -> m_Climb.setWinchVoltage(0)));
+
+    operatorController
+        .a()
+        .whileTrue(m_Climb.runGrab(() -> 1.0))
+        .whileFalse(Commands.run(() -> m_Climb.setGrabVoltage(0)));
 
     // m_Intake.setDefaultCommand(
     //     IntakeCommands.IntakeRPSTestCommands(
