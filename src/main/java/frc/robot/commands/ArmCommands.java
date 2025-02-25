@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Mechanisms.Arm;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
+import static frc.robot.Constants.Setpoints.*;
 
 /** Add your docs here. */
 public class ArmCommands {
@@ -32,5 +33,9 @@ public class ArmCommands {
 
   public static Command EndEffectorController(Arm m_Arm, Supplier<Double> endEffectorSupplier) {
     return Commands.run(() -> m_Arm.setEndEffectorVoltage(endEffectorSupplier.get() * 4), m_Arm);
+  }
+
+  public static Command waitUntilArmAngle(Arm m_Arm, double angle) {
+    return Commands.waitUntil(() -> Math.abs(Arm.getRelativeAngle(angle, m_Arm.getPivotAngle())) < ANGLE_TOLERANCE);
   }
 }

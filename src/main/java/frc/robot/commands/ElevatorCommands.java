@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Mechanisms.Elevator;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
+import static frc.robot.Constants.Setpoints.*;
 
 /** Add your docs here. */
 public class ElevatorCommands {
@@ -38,5 +39,9 @@ public class ElevatorCommands {
           m_Elevator.setVoltage(voltage.get());
         },
         m_Elevator);
+  }
+
+  public static Command waitUntilElevatorHeight(Elevator m_Elevator, double height) {
+    return Commands.waitUntil(() -> Math.abs(height - m_Elevator.getLeftElevatorPosition()) < POSITION_TOLERANCE);
   }
 }
