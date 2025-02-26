@@ -51,7 +51,7 @@ public class VisionIOPhotonVision implements VisionIO {
     List<PoseObservation> poseObservations = new LinkedList<>();
     for (var result : camera.getAllUnreadResults()) {
       for (PhotonTrackedTarget target : result.getTargets()) {
-        Logger.recordOutput("Camera Transform" + target.fiducialId, target.getBestCameraToTarget());
+        Logger.recordOutput("Vision/Camera Transform/Tag " + target.fiducialId, target.getBestCameraToTarget());
       }
       // Update latest target observation
       if (result.hasTargets()) {
