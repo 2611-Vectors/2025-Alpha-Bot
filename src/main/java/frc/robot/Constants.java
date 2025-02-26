@@ -192,12 +192,12 @@ public final class Constants {
         new Transform3d(
             Units.inchesToMeters(11),
             Units.inchesToMeters(-10.5),
-            Units.inchesToMeters(9),
-            new Rotation3d(0.0, Math.toRadians(-9), Math.toRadians(160)));
+            Units.inchesToMeters(7.75), // previous value 9
+            new Rotation3d(0.0, Math.toRadians(-20), Math.toRadians(160)));
 
     // Basic filtering thresholds
     public static double maxAmbiguity = 0.3;
-    public static double maxZError = 0.1;
+    public static double maxZError = 0.2;
 
     // Standard deviation baselines, for 1 meter distance and 1 tag
     // (Adjusted automatically based on distance and # of tags)
