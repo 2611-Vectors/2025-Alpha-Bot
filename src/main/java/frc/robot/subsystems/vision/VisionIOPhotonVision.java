@@ -22,7 +22,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 /** IO implementation for real PhotonVision hardware. */
 public class VisionIOPhotonVision implements VisionIO {
@@ -48,6 +50,9 @@ public class VisionIOPhotonVision implements VisionIO {
     Set<Short> tagIds = new HashSet<>();
     List<PoseObservation> poseObservations = new LinkedList<>();
     for (var result : camera.getAllUnreadResults()) {
+      for (PhotonTrackedTarget target : result.getTargets()) {
+        Logger.recordOutput("Camera Transform" + target.fiducialId, target.getBestCameraToTarget());
+      }
       // Update latest target observation
       if (result.hasTargets()) {
         inputs.latestTargetObservation =
