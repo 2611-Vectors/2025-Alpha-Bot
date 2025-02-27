@@ -246,13 +246,13 @@ public class Drive extends SubsystemBase {
         noVision.updateWithTime(sampleTimestamps[i], rawGyroRotation, correctedModulePositions);
       } else {
         // Use the angle delta from the kinematics and module deltas
-        Twist2d twist = kinematics.toTwist2d(correctedModulePositions);
+        Twist2d twist = kinematics.toTwist2d(correctedModuleDeltas);
         rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
       }
 
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, correctedModulePositions);
-      Logger.recordOutput("PLZ WORK", noVision.getEstimatedPosition());
+      // Logger.recordOutput("PLZ WORK", noVision.getEstimatedPosition());
     }
 
     // Update gyro alert

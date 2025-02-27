@@ -103,20 +103,18 @@ public class RobotContainer {
         m_Vision =
             new Vision(
                 drive::addVisionMeasurement,
-                // new VisionIOPhotonVisionSim(
-                //     VisionConstants.BackRightCam,
-                //     VisionConstants.robotToBackRightCam,
-                //     drive::getPose) // ,
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.BackRightCam,
+                    VisionConstants.robotToBackRightCam,
+                    drive::getPose),
                 new VisionIOPhotonVisionSim(
                     VisionConstants.FrontRightCam,
                     VisionConstants.robotToFrontRightCam,
-                    drive::getPose)
-                //     ,
-                // new VisionIOPhotonVisionSim(
-                //     VisionConstants.BackLeftCam,
-                //     VisionConstants.robotToBackLeftCam,
-                //     drive::getPose)
-                );
+                    drive::getPose),
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.BackLeftCam,
+                    VisionConstants.robotToBackLeftCam,
+                    drive::getPose));
         break;
 
       default:
