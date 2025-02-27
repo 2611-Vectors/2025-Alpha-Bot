@@ -147,7 +147,7 @@ public final class Constants {
     public static final double MU_FORWARD = 1.04191; // Friction coefficient in positive X direction
     public static final double MU_BACKWARD = 0.9355; // Friction coefficient in negative X direction
     public static final double MU_LEFT = 1.0; // Friction coefficient in negative Y direction
-    public static final double MU_RIGHT = 1.0; // Friction coefficient in positive Y direction
+    public static final double MU_RIGHT = 1.07467; // Friction coefficient in positive Y direction
   }
 
   public static class VisionConstants {
@@ -181,10 +181,10 @@ public final class Constants {
     // Position of the PhotonVision Reef Camera
     public static Transform3d robotToFrontLeftCam =
         new Transform3d(
+            Units.inchesToMeters(12.5),
             Units.inchesToMeters(11),
-            Units.inchesToMeters(10.5),
-            Units.inchesToMeters(34),
-            new Rotation3d(0.0, Math.toRadians(1), Math.toRadians(45)));
+            Units.inchesToMeters(35),
+            new Rotation3d(0.0, Math.toRadians(0), Math.toRadians(40)));
 
     public static String FrontRightCam = "FrontRightCam";
     // Position of the PhotonVision Reef Camera
@@ -196,7 +196,7 @@ public final class Constants {
             new Rotation3d(0.0, Math.toRadians(-20), Math.toRadians(160)));
 
     // Basic filtering thresholds
-    public static double maxAmbiguity = 0.3;
+    public static double maxAmbiguity = 0.1;
     public static double maxZError = 0.2;
 
     // Standard deviation baselines, for 1 meter distance and 1 tag
