@@ -18,6 +18,7 @@ import static frc.robot.Constants.VisionConstants.*;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,7 +52,8 @@ public class VisionIOPhotonVision implements VisionIO {
     List<PoseObservation> poseObservations = new LinkedList<>();
     for (var result : camera.getAllUnreadResults()) {
       for (PhotonTrackedTarget target : result.getTargets()) {
-        Logger.recordOutput("Camera Transform" + target.fiducialId, target.getBestCameraToTarget());
+        Logger.recordOutput(
+            "Vision/Camera Transform/Tag " + target.fiducialId, target.getBestCameraToTarget());
       }
       // Update latest target observation
       if (result.hasTargets()) {
@@ -132,5 +134,66 @@ public class VisionIOPhotonVision implements VisionIO {
     for (int id : tagIds) {
       inputs.tagIds[i++] = id;
     }
+  }
+
+  @Override
+  public HashMap<Integer, Transform3d> getTagRelativeToRobot(VisionIOInputs inputs) {
+    inputs.connected = camera.isConnected();
+
+    HashMap<Integer, Transform3d> tagToRobot = new HashMap<>();
+
+    var result = camera.getLatestResult(); // Yes I know this is depracted
+    // Add pose observation
+    if (result.multitagResult.isPresent()) { // Multitag result
+      for (var target : result.getTargets()) {
+        Transform3d cameraToTag = target.getBestCameraToTarget();
+
+        // Calculate the transformation from the robot to the target
+        Transform3d robotToTag = robotToFrontLeftCam.plus(cameraToTag);
+        tagToRobot.put(target.fiducialId, robotToTag);
+      }
+    } else if (!result.targets.isEmpty()) { // Single tag result
+      var target = result.targets.get(0);
+      Transform3d cameraToTag = target.getBestCameraToTarget();
+
+      // Calculate the transformation from the robot to the target
+      Transform3d robotToTag = robotToCamera.plus(cameraToTag);
+      tagToRobot.put(target.fiducialId, robotToTag);
+    }
+    return tagToRobot;
+  }
+
+  @Override
+  public HashMap<Integer, Transform3d> getCameraRelativeToRobot(VisionIOInputs inputs) {
+    inputs.connected = camera.isConnected();
+
+    HashMap<Integer, Transform3d> robotToCamera = new HashMap<>();
+
+    var result = camera.getLatestResult(); // Yes I know this is depracted
+    // Add pose observation
+    if (result.multitagResult.isPresent()) { // Multitag result
+      for (var target : result.getTargets()) {
+        var tagPose = aprilTagLayout.getTagPose(target.fiducialId);
+        if (tagPose.isPresent()) {
+          Transform3d fieldToTarget =
+              new Transform3d(tagPose.get().getTranslation(), tagPose.get().getRotation());
+          Transform3d cameraToTarget = target.getBestCameraToTarget();
+          Transform3d fieldToCamera = fieldToTarget.plus(cameraToTarget.inverse());
+          robotToCamera.put(target.fiducialId, fieldToCamera);
+        }
+      }
+    } else if (!result.targets.isEmpty()) { // Single tag result
+
+      var target = result.targets.get(0);
+      var tagPose = aprilTagLayout.getTagPose(target.fiducialId);
+      if (tagPose.isPresent()) {
+        Transform3d fieldToTarget =
+            new Transform3d(tagPose.get().getTranslation(), tagPose.get().getRotation());
+        Transform3d cameraToTarget = target.getBestCameraToTarget();
+        Transform3d fieldToCamera = fieldToTarget.plus(cameraToTarget.inverse());
+        robotToCamera.put(target.fiducialId, fieldToCamera);
+      }
+    }
+    return robotToCamera;
   }
 }

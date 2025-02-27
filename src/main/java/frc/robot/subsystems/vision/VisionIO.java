@@ -15,6 +15,8 @@ package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
+import java.util.HashMap;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface VisionIO {
@@ -46,4 +48,12 @@ public interface VisionIO {
   }
 
   public default void updateInputs(VisionIOInputs inputs) {}
+
+  public default HashMap<Integer, Transform3d> getTagRelativeToRobot(VisionIOInputs inputs) {
+    throw new IllegalArgumentException("Should be using Photon Vision not limelight");
+  }
+
+  public default HashMap<Integer, Transform3d> getCameraRelativeToRobot(VisionIOInputs inputs) {
+    throw new IllegalArgumentException("Should be using Photon Vision not limelight");
+  }
 }

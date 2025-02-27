@@ -20,6 +20,9 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
@@ -27,8 +30,11 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import frc.robot.subsystems.vision.VisionIO.VisionIOInputs;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
@@ -194,6 +200,70 @@ public class Vision extends SubsystemBase {
         allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
     // Constants.VisionConstants.maxAmbiguity = ambiguity.get();
     // Constants.VisionConstants.maxZError = zError.get();
+  }
+
+  public void calculateTagPositions(Supplier<Pose2d> robotPoseSupplier) {
+    for (int i = 0; i < io.length; i++) {
+      HashMap<Integer, Transform3d> tagsRealtiveToRobot = io[i].getTagRelativeToRobot(inputs[i]);
+      Pose2d robotPose = robotPoseSupplier.get();
+      Pose3d robotPose3d =
+          new Pose3d(
+              new Translation3d(robotPose.getX(), robotPose.getY(), 0.0),
+              new Rotation3d(0.0, 0.0, robotPose.getRotation().getRadians()));
+      for (Map.Entry<Integer, Transform3d> entry : tagsRealtiveToRobot.entrySet()) {
+        Logger.recordOutput(
+            "Vision/AutoCameraConfig/Camera"
+                + Integer.toString(i)
+                + " Tag Locations/Tag ID"
+                + entry.getKey(),
+            robotPose3d.plus(entry.getValue()));
+      }
+    }
+  }
+
+  public void calculateCameraPositions(Supplier<Pose2d> robotPoseSupplier) {
+    for (int i = 0; i < io.length; i++) {
+      HashMap<Integer, Transform3d> robotToCamera = io[i].getCameraRelativeToRobot(inputs[i]);
+      Pose2d robotPose = robotPoseSupplier.get();
+      Pose3d robotPose3d =
+          new Pose3d(
+              new Translation3d(robotPose.getX(), robotPose.getY(), 0.0),
+              new Rotation3d(0.0, 0.0, robotPose.getRotation().getRadians()));
+      Transform3d fieldToRobot =
+          new Transform3d(robotPose3d.getTranslation(), robotPose3d.getRotation());
+      for (Map.Entry<Integer, Transform3d> entry : robotToCamera.entrySet()) {
+        Transform3d cameraTransform = fieldToRobot.inverse().plus(entry.getValue());
+        Logger.recordOutput(
+            "Vision/AutoCameraConfig/Camera"
+                + Integer.toString(i)
+                + " Camera Location/Tag ID"
+                + entry.getKey(),
+            cameraTransform);
+        Logger.recordOutput(
+            "Vision/AutoCameraConfig/Camera"
+                + Integer.toString(i)
+                + " Camera Location/Tag ID"
+                + entry.getKey()
+                + " roll",
+            Math.toDegrees(cameraTransform.getRotation().getMeasureX().magnitude()));
+
+        Logger.recordOutput(
+            "Vision/AutoCameraConfig/Camera"
+                + Integer.toString(i)
+                + " Camera Location/Tag ID"
+                + entry.getKey()
+                + " pitch",
+            Math.toDegrees(cameraTransform.getRotation().getMeasureY().magnitude()));
+
+        Logger.recordOutput(
+            "Vision/AutoCameraConfig/Camera"
+                + Integer.toString(i)
+                + " Camera Location/Tag ID"
+                + entry.getKey()
+                + " yaw",
+            Math.toDegrees(cameraTransform.getRotation().getMeasureZ().magnitude()));
+      }
+    }
   }
 
   @FunctionalInterface
