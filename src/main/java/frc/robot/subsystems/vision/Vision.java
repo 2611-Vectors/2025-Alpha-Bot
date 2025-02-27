@@ -17,7 +17,6 @@ import static frc.robot.Constants.VisionConstants.*;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -26,7 +25,6 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import frc.robot.subsystems.vision.VisionIO.VisionIOInputs;
 import java.util.LinkedList;
@@ -40,8 +38,8 @@ public class Vision extends SubsystemBase {
   private final VisionIOInputs[] inputs;
   private final Alert[] disconnectedAlerts;
 
-  LinearFilter filterY = LinearFilter.movingAverage(5);
-  LinearFilter filterX = LinearFilter.movingAverage(5);
+  // LinearFilter filterY = LinearFilter.movingAverage(5);
+  // LinearFilter filterX = LinearFilter.movingAverage(5);
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
@@ -149,15 +147,17 @@ public class Vision extends SubsystemBase {
           angularStdDev *= cameraStdDevFactors[cameraIndex];
         }
 
-        Pose2d visonPose2d = observation.pose().toPose2d();
-        double x = filterX.calculate(visonPose2d.getX());
-        double y = filterY.calculate(visonPose2d.getY());
+        // Pose2d visonPose2d = observation.pose().toPose2d();
+        // double x = filterX.calculate(visonPose2d.getX());
+        // double y = filterY.calculate(visonPose2d.getY());
 
         Logger.recordOutput(
-            "TestOdometry/FilterPosition", new Pose2d(x, y, visonPose2d.getRotation()));
+            "TestOdometry/FilterPosition",
+            observation.pose().toPose2d()); // new Pose2d(x, y, visonPose2d.getRotation()));
         // Send vision observation
         consumer.accept(
-            new Pose2d(x, y, visonPose2d.getRotation()),
+            observation.pose().toPose2d(),
+            // new Pose2d(x, y, visonPose2d.getRotation()),
             observation.timestamp(),
             VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
       }
@@ -192,8 +192,8 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput(
         "Vision/Summary/RobotPosesRejected",
         allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
-    Constants.VisionConstants.maxAmbiguity = ambiguity.get();
-    Constants.VisionConstants.maxZError = zError.get();
+    // Constants.VisionConstants.maxAmbiguity = ambiguity.get();
+    // Constants.VisionConstants.maxZError = zError.get();
   }
 
   @FunctionalInterface
