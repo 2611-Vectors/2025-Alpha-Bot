@@ -38,7 +38,6 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-import frc.robot.util.CustomAutoBuilder;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -155,6 +154,23 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+    autoChooser.addOption(
+        "Tag Position Calculator",
+        Commands.sequence(
+            Commands.runOnce(() -> drive.setPose(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0)))),
+            Commands.parallel(
+                DriveCommands.joystickDrive(
+                    drive, () -> 0.0, () -> 0.0, () -> -0.3), // Spins slowly
+                Commands.run(() -> m_Vision.calculateTagPositions(() -> drive.getPose())))));
+
+    autoChooser.addOption(
+        "Camera Position Calculator",
+        Commands.sequence(
+            Commands.runOnce(() -> drive.setPose(new Pose2d(5.0, 5.0, Rotation2d.fromDegrees(0)))),
+            Commands.parallel(
+                DriveCommands.joystickDrive(
+                    drive, () -> 0.0, () -> 0.0, () -> -0.3), // Spins slowly
+                Commands.run(() -> m_Vision.calculateCameraPositions(() -> drive.getPose())))));
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -264,9 +280,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    drive.setPose(CustomAutoBuilder.getStartPose2d());
-    return CustomAutoBuilder.getAutonCommand(drive);
-    // return autoChooser.get();
+    // drive.setPose(CustomAutoBuilder.getStartPose2d());
+    // return CustomAutoBuilder.getAutonCommand(drive);
+    return autoChooser.get();
     // return new L4Auton(m_Elevator, m_Arm);
   }
 }
