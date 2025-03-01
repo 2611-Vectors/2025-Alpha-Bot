@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import static frc.robot.Constants.Setpoints.*;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Mechanisms.Elevator;
@@ -38,5 +40,10 @@ public class ElevatorCommands {
           m_Elevator.setVoltage(voltage.get());
         },
         m_Elevator);
+  }
+
+  public static Command waitUntilElevatorHeight(Elevator m_Elevator, double height) {
+    return Commands.waitUntil(
+        () -> Math.abs(height - m_Elevator.getLeftElevatorPosition()) < POSITION_TOLERANCE);
   }
 }

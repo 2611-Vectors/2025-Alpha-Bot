@@ -13,6 +13,8 @@
 
 package frc.robot;
 
+import static frc.robot.Constants.AutonConstants.LEFT_OFFSET;
+import static frc.robot.Constants.AutonConstants.RIGHT_OFFSET;
 import static frc.robot.Constants.Setpoints.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -25,13 +27,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.VisionConstants;
-import frc.robot.commands.Autons.Left3Auton;
+import frc.robot.commands.AlignReef;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.Home;
-import frc.robot.commands.LoadStationIntake;
-import frc.robot.commands.ScoreSetpoints;
-import frc.robot.commands.SetScorer;
+import frc.robot.commands.Autons.Left3Auton;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.ActionHandlers.ScoringScheduler;
 import frc.robot.subsystems.Mechanisms.Arm;
 import frc.robot.subsystems.Mechanisms.Climb;
 import frc.robot.subsystems.Mechanisms.Elevator;
@@ -57,17 +57,22 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  //   private final Intake m_Intake;
-  //   private final Transition m_Transition;
-    private final Elevator m_Elevator;
-    private final Arm m_Arm;
+  private final Elevator m_Elevator;
+  private final Arm m_Arm;
   private final Climb m_Climb;
 
-  private final Vision m_Vision;
+  // Subsystem Schedulers
+  private final ScoringScheduler m_ScoringScheduler;
+
+  // We don't plan on using these 2 for first comp
+  // private final Intake m_Intake;
+  // private final Transition m_Transition;
+
+    private final Vision m_Vision;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
-  private final CommandXboxController operatorController = new CommandXboxController(1);
+  private final CommandXboxController buttonBoard = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -107,12 +112,11 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
         m_Vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim(
-                    VisionConstants.BackRightCam,
-                    VisionConstants.robotToBackRightCam,
-                    drive::getPose));
+        new Vision(
+            drive::addVisionMeasurement, new VisionIOPhotonVisionSim(
+                VisionConstants.BackRightCam,
+                VisionConstants.robotToBackRightCam,
+                drive::getPose));
         // new VisionIOPhotonVisionSim(
         //     VisionConstants.FrontRightCam,
         //     VisionConstants.robotToFrontRightCam,
@@ -136,11 +140,14 @@ public class RobotContainer {
         break;
     }
 
+    // We don't plan on using these 2 for first comp
     // m_Intake = new Intake();
     // m_Transition = new Transition();
     m_Elevator = new Elevator();
     m_Arm = new Arm();
     m_Climb = new Climb();
+
+    m_ScoringScheduler = new ScoringScheduler(m_Elevator, m_Arm);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -179,6 +186,7 @@ public class RobotContainer {
                 Commands.run(() -> m_Vision.calculateCameraPositions(() -> drive.getPose())))));
     // Configure the button bindings
     configureButtonBindings();
+    // configureTestBindings();
   }
 
   /**
@@ -196,64 +204,32 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    operatorController
-        .rightTrigger(0.1)
-        .or(operatorController.leftTrigger(0.1))
-        .whileTrue(
-            m_Climb.runWinch(
-                () -> operatorController.getLeftTriggerAxis(),
-                () -> operatorController.getRightTriggerAxis()))
-        .whileFalse(Commands.run(() -> m_Climb.setWinchVoltage(0)));
-
-    operatorController
-        .a()
-        .whileTrue(m_Climb.runGrab(() -> -.5))
-        .whileFalse(Commands.run(() -> m_Climb.setGrabVoltage(0)));
-
-    // m_Intake.setDefaultCommand(
-    //     IntakeCommands.IntakeRPSTestCommands(
-    //         m_Intake)); // , () -> operatorController.getLeftY(), () -> 0.0));
-    // m_Arm.setDefaultCommand(
-    //     ArmCommands.EndEffectorController(m_Arm, () -> operatorController.getLeftY()));
-    // m_Intake.setDefaultCommand(
-    // IntakeCommands.IntakeSimpleController(
-    // m_Intake, () -> operatorController.getLeftY(), () ->
-    // operatorController.getRightY()));
-    // m_Transition.setDefaultCommand(
-    //     TransitionCommands.TransitionRPSTestCommand(
-    //         m_Transition)); // , () -> operatorController.getRightY()));
-
-    operatorController
-        .a()
-        .onTrue(
-            new ScoreSetpoints(m_Elevator, m_Arm, L2_HEIGHT_IN, L2_ANGLE)
-                .andThen(SetScorer.set(m_Elevator, m_Arm, HOME_HEIGHT_IN, HOME_ANGLE)));
-
-    operatorController.b().whileTrue(new ScoreSetpoints(m_Elevator, m_Arm, L3_HEIGHT_IN,
-    L3_ANGLE));
-    operatorController.y().whileTrue(new ScoreSetpoints(m_Elevator, m_Arm, L4_HEIGHT_IN,
-    L4_ANGLE));
-
-    operatorController.x().whileTrue(new Home(m_Elevator, m_Arm));
-    operatorController.start().whileTrue(new LoadStationIntake(m_Elevator, m_Arm));
-
-    // operatorController
-    //     .rightBumper()
+    // buttonBoard
+    //     .rightTrigger(0.1)
+    //     .or(buttonBoard.leftTrigger(0.1))
     //     .whileTrue(
-    //         Commands.run(() -> m_Intake.extendIntake())
-    //             .finallyDo(() -> m_Intake.setPivotVoltage(0.0)));
-    // operatorController
-    //     .leftBumper()
-    //     .whileTrue(
-    //         Commands.run(() -> m_Intake.retractIntake())
-    //             .finallyDo(() -> m_Intake.setPivotVoltage(0.0)));
-    // m_Elevator.setDefaultCommand(
-    // ElevatorCommands.ElevatorTestCommand(
-    // m_Elevator)); // , () -> -operatorController.getLeftY()));
-    // m_Arm.setDefaultCommand(
-    // ArmCommands.ArmTestCommand(m_Arm)); // , () -> operatorController.getLeftY(),
-    // () ->
-    // operatorController.getRightY()));
+    //         m_Climb.runWinch(
+    //             () -> buttonBoard.getLeftTriggerAxis(),
+    //             () -> buttonBoard.getRightTriggerAxis()))
+    //     .whileFalse(Commands.run(() -> m_Climb.setWinchVoltage(0)));
+
+    // buttonBoard
+    //     .a()
+    //     .whileTrue(m_Climb.runGrab(() -> -.5))
+    //     .whileFalse(Commands.run(() -> m_Climb.setGrabVoltage(0)));
+
+    // Commands.either(slewrateCommand, normalDriveCommands, () ->
+    // m_Elevator.getLeftElevatorPosition() > 8);
+
+    buttonBoard.leftBumper().whileTrue(new AlignReef(drive, LEFT_OFFSET));
+    buttonBoard.rightBumper().whileTrue(new AlignReef(drive, RIGHT_OFFSET));
+
+    m_ScoringScheduler.setDefaultCommand(m_ScoringScheduler.travelPosition());
+    buttonBoard.a().whileTrue(m_ScoringScheduler.scoreSetpoint(L2_HEIGHT_IN, L2_ANGLE));
+    buttonBoard.x().whileTrue(m_ScoringScheduler.scoreSetpoint(L2_HEIGHT_IN, L2_ANGLE));
+    buttonBoard.b().whileTrue(m_ScoringScheduler.scoreSetpoint(L3_HEIGHT_IN, L3_ANGLE));
+    buttonBoard.y().whileTrue(m_ScoringScheduler.scoreSetpoint(L4_HEIGHT_IN, L4_ANGLE));
+    buttonBoard.leftStick().whileTrue(m_ScoringScheduler.loadStationIntake());
 
     // Lock to 0° when A button is held
     controller
@@ -280,6 +256,8 @@ public class RobotContainer {
                 .ignoringDisable(true));
   }
 
+  public void configureTestBindings() {}
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -289,6 +267,6 @@ public class RobotContainer {
     drive.setPose(CustomAutoBuilder.getStartPose2d());
     // return CustomAutoBuilder.getAutonCommand(drive);
     // return autoChooser.get();
-    return new Left3Auton(null, null);
+    return new Left3Auton(m_Elevator, m_Arm);
   }
 }

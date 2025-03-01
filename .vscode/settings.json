@@ -62,12 +62,12 @@
     "edu.wpi.first.math.**.proto.*",
     "edu.wpi.first.math.**.struct.*"
   ],
-  "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle",
+  "editor.defaultFormatter": "redhat.java",
   "[json]": {
     "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle"
   },
   "[java]": {
-    "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle"
+    "editor.defaultFormatter": "redhat.java"
   },
   "java.debug.settings.onBuildFailureProceed": true,
   "editor.formatOnSave": false,
