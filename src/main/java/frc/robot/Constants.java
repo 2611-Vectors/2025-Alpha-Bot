@@ -94,14 +94,14 @@ public final class Constants {
     public static final double TRAVEL_HEIGHT = 1.0;
     public static final double L2_HEIGHT_IN = 7.0;
     public static final double L3_HEIGHT_IN = 21.0;
-    public static final double L4_HEIGHT_IN = 61.0;
+    public static final double L4_HEIGHT_IN = 46.0;
     public static final double INTAKE_HEIGHT_IN = 28.25;
 
     public static final double HOME_ANGLE = -90;
     public static final double TRAVEL_ANGLE = -90;
     public static final double L2_ANGLE = -55;
     public static final double L3_ANGLE = -55;
-    public static final double L4_ANGLE = -5;
+    public static final double L4_ANGLE = -55;
     public static final double INTAKE_ANGLE = 45.0;
 
     // 19 inches tall

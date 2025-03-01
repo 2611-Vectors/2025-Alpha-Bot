@@ -14,7 +14,6 @@ import frc.robot.Constants;
 import frc.robot.util.MechanismSimulator;
 import frc.robot.util.MechanismSimulatorActual;
 import frc.robot.util.PhoenixUtil;
-
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {

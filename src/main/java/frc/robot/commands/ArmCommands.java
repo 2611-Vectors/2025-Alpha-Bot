@@ -4,12 +4,13 @@
 
 package frc.robot.commands;
 
+import static frc.robot.Constants.Setpoints.*;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Mechanisms.Arm;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
-import static frc.robot.Constants.Setpoints.*;
 
 /** Add your docs here. */
 public class ArmCommands {
@@ -36,6 +37,7 @@ public class ArmCommands {
   }
 
   public static Command waitUntilArmAngle(Arm m_Arm, double angle) {
-    return Commands.waitUntil(() -> Math.abs(Arm.getRelativeAngle(angle, m_Arm.getPivotAngle())) < ANGLE_TOLERANCE);
+    return Commands.waitUntil(
+        () -> Math.abs(Arm.getRelativeAngle(angle, m_Arm.getPivotAngle())) < ANGLE_TOLERANCE);
   }
 }
