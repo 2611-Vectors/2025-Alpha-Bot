@@ -51,7 +51,7 @@ public final class Constants {
   public static double ELEVATOR_I = 0.01;
   public static double ELEVATOR_D = 0;
 
-  public static final double ELEVATOR_MAX_VOLTAGE = 3.0; // Set this to 8 for competition
+  public static final double ELEVATOR_MAX_VOLTAGE = 2.0; // Set this to 8 for competition
 
   // Constants for the elevator motor system
   public static final double ELEVATOR_GEAR_RATIO = 4.0;
@@ -60,7 +60,7 @@ public final class Constants {
   // Conversion factor from motor rotations to inches of travel
   public static final double ROTATIONS_TO_INCHES =
       (Math.PI * STRING_HOUSING_DIAMETER) / ELEVATOR_GEAR_RATIO;
-
+  public static final double STARTING_HEIGHT = 2;
   // Transition Code
   public static final int TRANSITION_ID = 31;
 
@@ -78,8 +78,9 @@ public final class Constants {
   public static final int ARM_MOTOR_ID = 44;
   public static final int ARM_PIVOT_PORT = 0;
   public static final int PIVOT_ANGLE_OFFSET = -90;
+
   public static final double ARM_GEAR_RATIO = 43.95;
-  public static final double ARM_MAX_VOLTAGE = 1.5; // Set this to 8 for competition
+  public static final double ARM_MAX_VOLTAGE = 1.0; // Set this to 8 for competition
   public static final double ARM_LENGTH = 0.6;
   public static final double LOWEST_HEIGHT = 0.3;
 
@@ -90,10 +91,10 @@ public final class Constants {
   public static final double TRANSITION_D = 0.0;
 
   public static class Setpoints {
-    public static final double HOME_HEIGHT_IN = 1.0;
-    public static final double L2_HEIGHT_IN = 7.0;
-    public static final double L3_HEIGHT_IN = 21.0;
-    public static final double L4_HEIGHT_IN = 61.0;
+    public static final double HOME_HEIGHT_IN = 5.0;
+    public static final double L2_HEIGHT_IN = 4.0;
+    public static final double L3_HEIGHT_IN = 18.0;
+    public static final double L4_HEIGHT_IN = 58.0;
     public static final double INTAKE_HEIGHT_IN = 28.25;
 
     public static final double HOME_ANGLE = -90;
@@ -109,11 +110,13 @@ public final class Constants {
   }
 
   public static class AutonConstants {
+    public static final int NUMBER_OF_CHOOSERS = 3;
+
     public static final Rotation2d START_ROTATION = Rotation2d.fromDegrees(0);
 
-    public static final Pose2d START_LEFT = new Pose2d(8.0, 2.21, START_ROTATION);
-    public static final Pose2d START_CENTER = new Pose2d(8.0, 6.20, START_ROTATION);
-    public static final Pose2d START_RIGHT = new Pose2d(8.0, 7.29, START_ROTATION);
+    public static final Pose2d START_LEFT = new Pose2d(7.200, 6.175, START_ROTATION);
+    public static final Pose2d START_CENTER = new Pose2d(7.200, 4.000, START_ROTATION);
+    public static final Pose2d START_RIGHT = new Pose2d(7.200, 1.900, START_ROTATION);
 
     public static final Pose2d AB = new Pose2d(3.2512, 4.0259, Rotation2d.fromDegrees(180));
     public static final Pose2d CD = new Pose2d(3.8707, 2.9543, Rotation2d.fromDegrees(-120));
@@ -125,8 +128,8 @@ public final class Constants {
     public static final double LEFT_OFFSET = 0.21; // In Meters
     public static final double RIGHT_OFFSET = -0.13; // In Meters
 
-    public static final Pose2d R1 = new Pose2d(1.13847, 7.10903, Rotation2d.fromDegrees(-150));
-    public static final Pose2d R0 = new Pose2d(1.5, 1.4, Rotation2d.fromDegrees(60));
+    public static final Pose2d R1 = new Pose2d(1.13847, 7.10903, Rotation2d.fromDegrees(-60));
+    public static final Pose2d R0 = new Pose2d(1.13847, .94297, Rotation2d.fromDegrees(60));
 
     public static final Map<Pose2d, Double> poseAngleMap = new HashMap<>();
 
@@ -139,8 +142,8 @@ public final class Constants {
       poseAngleMap.put(KL, -300.0);
     }
 
-    public static final double MAX_VELOCITY = 1; // 5.1
-    public static final double MAX_ACCELERATION = 0.75; // 2.9
+    public static final double MAX_VELOCITY = 2.00; // 5.1
+    public static final double MAX_ACCELERATION = 1.25; // 2.9
   }
 
   public static class FrictionConstants {
@@ -161,10 +164,10 @@ public final class Constants {
     // Position of the PhotonVision Reef Camera
     public static Transform3d robotToBackRightCam =
         new Transform3d(
-            Units.inchesToMeters(-10),
-            Units.inchesToMeters(-11),
-            Units.inchesToMeters(8.5),
-            new Rotation3d(0.0, Math.toRadians(-45), Math.toRadians(21)));
+            Units.inchesToMeters(-3.25),
+            Units.inchesToMeters(-4.375),
+            Units.inchesToMeters(7.5),
+            new Rotation3d(0.0, Math.toRadians(0), Math.toRadians(180)));
 
     public static String BackLeftCam = "BackLeftCam";
 

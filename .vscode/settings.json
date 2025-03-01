@@ -70,7 +70,7 @@
     "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle"
   },
   "java.debug.settings.onBuildFailureProceed": true,
-  "editor.formatOnSave": true,
+  "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {
     "source.organizeImports": "never"
   }

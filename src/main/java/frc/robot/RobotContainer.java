@@ -25,9 +25,16 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.commands.Autons.Left3Auton;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.Home;
+import frc.robot.commands.LoadStationIntake;
+import frc.robot.commands.ScoreSetpoints;
+import frc.robot.commands.SetScorer;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Mechanisms.Arm;
 import frc.robot.subsystems.Mechanisms.Climb;
+import frc.robot.subsystems.Mechanisms.Elevator;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -38,6 +45,7 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import frc.robot.util.CustomAutoBuilder;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -51,8 +59,8 @@ public class RobotContainer {
   private final Drive drive;
   //   private final Intake m_Intake;
   //   private final Transition m_Transition;
-  //   private final Elevator m_Elevator;
-  //   private final Arm m_Arm;
+    private final Elevator m_Elevator;
+    private final Arm m_Arm;
   private final Climb m_Climb;
 
   private final Vision m_Vision;
@@ -81,12 +89,11 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 // new VisionIOPhotonVision(
                 //     VisionConstants.BackRightCam, VisionConstants.robotToBackRightCam) // ,
-                new VisionIOPhotonVision(
-                    VisionConstants.FrontRightCam, VisionConstants.robotToFrontRightCam)
-                //     ,
                 // new VisionIOPhotonVision(
-                //     VisionConstants.BackLeftCam, VisionConstants.robotToFrontLeftCam)
-                );
+                //     VisionConstants.FrontRightCam, VisionConstants.robotToFrontRightCam)
+                //     ,
+                new VisionIOPhotonVision(
+                    VisionConstants.BackRightCam, VisionConstants.robotToBackRightCam));
 
         break;
 
@@ -105,15 +112,15 @@ public class RobotContainer {
                 new VisionIOPhotonVisionSim(
                     VisionConstants.BackRightCam,
                     VisionConstants.robotToBackRightCam,
-                    drive::getPose),
-                new VisionIOPhotonVisionSim(
-                    VisionConstants.FrontRightCam,
-                    VisionConstants.robotToFrontRightCam,
-                    drive::getPose),
-                new VisionIOPhotonVisionSim(
-                    VisionConstants.BackLeftCam,
-                    VisionConstants.robotToBackLeftCam,
                     drive::getPose));
+        // new VisionIOPhotonVisionSim(
+        //     VisionConstants.FrontRightCam,
+        //     VisionConstants.robotToFrontRightCam,
+        //     drive::getPose),
+        // new VisionIOPhotonVisionSim(
+        //     VisionConstants.BackLeftCam,
+        //     VisionConstants.robotToBackLeftCam,
+        //     drive::getPose));
         break;
 
       default:
@@ -131,8 +138,8 @@ public class RobotContainer {
 
     // m_Intake = new Intake();
     // m_Transition = new Transition();
-    // m_Elevator = new Elevator();
-    // m_Arm = new Arm();
+    m_Elevator = new Elevator();
+    m_Arm = new Arm();
     m_Climb = new Climb();
 
     // Set up auto routines
@@ -166,10 +173,9 @@ public class RobotContainer {
     autoChooser.addOption(
         "Camera Position Calculator",
         Commands.sequence(
-            Commands.runOnce(() -> drive.setPose(new Pose2d(5.0, 5.0, Rotation2d.fromDegrees(0)))),
+            Commands.runOnce(() -> drive.setPose(new Pose2d(2.0, 4.46, Rotation2d.fromDegrees(0)))),
             Commands.parallel(
-                DriveCommands.joystickDrive(
-                    drive, () -> 0.0, () -> 0.0, () -> -0.3), // Spins slowly
+                DriveCommands.joystickDrive(drive, () -> 0.0, () -> 0.0, () -> 0.0), // Spins slowly
                 Commands.run(() -> m_Vision.calculateCameraPositions(() -> drive.getPose())))));
     // Configure the button bindings
     configureButtonBindings();
@@ -201,7 +207,7 @@ public class RobotContainer {
 
     operatorController
         .a()
-        .whileTrue(m_Climb.runGrab(() -> 1.0))
+        .whileTrue(m_Climb.runGrab(() -> -.5))
         .whileFalse(Commands.run(() -> m_Climb.setGrabVoltage(0)));
 
     // m_Intake.setDefaultCommand(
@@ -217,19 +223,19 @@ public class RobotContainer {
     //     TransitionCommands.TransitionRPSTestCommand(
     //         m_Transition)); // , () -> operatorController.getRightY()));
 
-    // operatorController
-    //     .a()
-    //     .onTrue(
-    //         new ScoreSetpoints(m_Elevator, m_Arm, L2_HEIGHT_IN, L2_ANGLE)
-    //             .andThen(SetScorer.set(m_Elevator, m_Arm, HOME_HEIGHT_IN, HOME_ANGLE)));
+    operatorController
+        .a()
+        .onTrue(
+            new ScoreSetpoints(m_Elevator, m_Arm, L2_HEIGHT_IN, L2_ANGLE)
+                .andThen(SetScorer.set(m_Elevator, m_Arm, HOME_HEIGHT_IN, HOME_ANGLE)));
 
-    // operatorController.b().whileTrue(new ScoreSetpoints(m_Elevator, m_Arm, L3_HEIGHT_IN,
-    // L3_ANGLE));
-    // operatorController.y().whileTrue(new ScoreSetpoints(m_Elevator, m_Arm, L4_HEIGHT_IN,
-    // L4_ANGLE));
+    operatorController.b().whileTrue(new ScoreSetpoints(m_Elevator, m_Arm, L3_HEIGHT_IN,
+    L3_ANGLE));
+    operatorController.y().whileTrue(new ScoreSetpoints(m_Elevator, m_Arm, L4_HEIGHT_IN,
+    L4_ANGLE));
 
-    // operatorController.x().whileTrue(new Home(m_Elevator, m_Arm));
-    // operatorController.start().whileTrue(new LoadStationIntake(m_Elevator, m_Arm));
+    operatorController.x().whileTrue(new Home(m_Elevator, m_Arm));
+    operatorController.start().whileTrue(new LoadStationIntake(m_Elevator, m_Arm));
 
     // operatorController
     //     .rightBumper()
@@ -280,9 +286,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // drive.setPose(CustomAutoBuilder.getStartPose2d());
+    drive.setPose(CustomAutoBuilder.getStartPose2d());
     // return CustomAutoBuilder.getAutonCommand(drive);
-    return autoChooser.get();
-    // return new L4Auton(m_Elevator, m_Arm);
+    // return autoChooser.get();
+    return new Left3Auton(null, null);
   }
 }

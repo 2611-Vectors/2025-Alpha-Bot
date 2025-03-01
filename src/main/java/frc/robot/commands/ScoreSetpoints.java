@@ -27,7 +27,7 @@ public class ScoreSetpoints extends SequentialCommandGroup {
                 () ->
                     Math.abs(height - m_Elevator.getLeftElevatorPosition()) < POSITION_TOLERANCE)),
         Commands.race(
-            Commands.run(() -> m_Arm.setEndEffectorVoltage(1)),
+            Commands.run(() -> m_Arm.setEndEffectorVoltage(-1)),
             SetScorer.set(m_Elevator, m_Arm, height, Arm.flipAngle(angle)),
             Commands.waitUntil(
                 () ->
@@ -35,8 +35,9 @@ public class ScoreSetpoints extends SequentialCommandGroup {
                         < ANGLE_TOLERANCE)),
         Commands.race(
             SetScorer.set(m_Elevator, m_Arm, height, Arm.flipAngle(angle)),
-            Commands.run(() -> m_Arm.setEndEffectorVoltage(-2)),
+            Commands.run(() -> m_Arm.setEndEffectorVoltage(2)),
             new WaitCommand(2)),
+        Commands.runOnce(() -> m_Arm.setEndEffectorVoltage(0)),
         new Home(m_Elevator, m_Arm));
   }
 }

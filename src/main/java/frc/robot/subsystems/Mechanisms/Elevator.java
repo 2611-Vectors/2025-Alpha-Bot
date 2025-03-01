@@ -65,11 +65,13 @@ public class Elevator extends SubsystemBase {
    * right encoder values
    */
   public double getLeftElevatorPosition() {
-    return leftMotor.getPosition().getValueAsDouble() * Constants.ROTATIONS_TO_INCHES;
+    return leftMotor.getPosition().getValueAsDouble() * Constants.ROTATIONS_TO_INCHES
+        + Constants.STARTING_HEIGHT;
   }
 
   public double getRightElevatorPosition() {
-    return rightMotor.getPosition().getValueAsDouble() * Constants.ROTATIONS_TO_INCHES;
+    return rightMotor.getPosition().getValueAsDouble() * Constants.ROTATIONS_TO_INCHES
+        + Constants.STARTING_HEIGHT;
   }
 
   @Override

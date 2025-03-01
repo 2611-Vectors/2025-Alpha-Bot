@@ -161,6 +161,7 @@ public class Vision extends SubsystemBase {
             "TestOdometry/FilterPosition",
             observation.pose().toPose2d()); // new Pose2d(x, y, visonPose2d.getRotation()));
         // Send vision observation
+
         consumer.accept(
             observation.pose().toPose2d(),
             // new Pose2d(x, y, visonPose2d.getRotation()),

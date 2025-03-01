@@ -32,7 +32,7 @@ public class Climb extends SubsystemBase {
   }
 
   public Command runWinch(Supplier<Double> leftPower, Supplier<Double> rightPower) {
-    return Commands.run(() -> setWinchVoltage((leftPower.get() - rightPower.get()) * 10));
+    return Commands.run(() -> setWinchVoltage((leftPower.get() - rightPower.get()) * 5));
   }
 
   public Command runGrab(Supplier<Double> power) {

@@ -8,6 +8,7 @@ import static frc.robot.Constants.AutonConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
@@ -36,7 +37,6 @@ public class CustomAutoBuilder {
 
   public static Field2d m_field = new Field2d();
   public static Translation2d[] vertexs = new Translation2d[6];
-  public static int NUMBER_OF_CHOOSERS = 1;
 
   @SuppressWarnings("unchecked")
   public static void chooserBuilder() {
@@ -129,21 +129,21 @@ public class CustomAutoBuilder {
     drivePaths = new ArrayList<>();
     startPath =
         getPathFromPoints(
-            startChooser.get().getTranslation(),
-            applyOffset(scoreChoosers[0].get(), lateralChoosers[0].get()));
+            startChooser.get(), applyOffset(scoreChoosers[0].get(), lateralChoosers[0].get()));
 
     paths.add(startPath.getPathPoses().toArray(new Pose2d[startPath.getPathPoses().size()]));
     autonPath = Commands.sequence(trajectoryDisplay(startPath), AutoBuilder.followPath(startPath));
+
     drivePaths.add(
         Commands.sequence(trajectoryDisplay(startPath), AutoBuilder.followPath(startPath)));
     for (int i = 0; i < scoreChoosers.length - 1; i++) {
       PathPlannerPath path1 =
           getPathFromPoints(
-              applyOffset(scoreChoosers[i].get(), lateralChoosers[i].get()).getTranslation(),
+              applyOffset(scoreChoosers[i].get(), lateralChoosers[i].get()),
               loadStationChoosers[i].get());
       PathPlannerPath path2 =
           getPathFromPoints(
-              loadStationChoosers[i].get().getTranslation(),
+              loadStationChoosers[i].get(),
               applyOffset(scoreChoosers[i + 1].get(), lateralChoosers[i + 1].get()));
 
       paths.add(path1.getPathPoses().toArray(new Pose2d[path1.getPathPoses().size()]));
@@ -178,10 +178,10 @@ public class CustomAutoBuilder {
     return Commands.sequence(autonPath);
   }
 
-  public static PathPlannerPath getPathFromPoints(Translation2d point1, Pose2d point2) {
+  public static PathPlannerPath getPathFromPoints(Pose2d point1, Pose2d point2) {
     PathConstraints constraints =
         new PathConstraints(MAX_VELOCITY, MAX_ACCELERATION, Math.PI, 2 * Math.PI);
-    List<Waypoint> waypoints = generateWaypoints(point1, point2.getTranslation());
+    List<Waypoint> waypoints = generateWaypoints(point1.getTranslation(), point2.getTranslation());
     return new PathPlannerPath(
         waypoints,
         new ArrayList<>(),
@@ -189,7 +189,10 @@ public class CustomAutoBuilder {
         new ArrayList<>(),
         new ArrayList<>(),
         constraints,
-        null, // The ideal starting state, this is only relevant for pre-planned
+        new IdealStartingState(
+            0.0,
+            point1
+                .getRotation()), // The ideal starting state, this is only relevant for pre-planned
         // paths, so can
         // be null for on-the-fly paths.
         new GoalEndState(
