@@ -48,15 +48,15 @@ public class ScoringScheduler extends SubsystemBase {
   public Command scoreSetpoint(double height, double angle) {
     Command ret =
         Commands.sequence(
-            setScorer(height, HOME_ANGLE),
-            Commands.runOnce(() -> m_Arm.setEndEffectorVoltage(0)),
-            setScorer(height, Arm.flipAngle(angle)),
-            Commands.race(
-                Commands.run(() -> m_Arm.setPivotAngle(Arm.flipAngle(angle))),
-                Commands.run(() -> m_Arm.setEndEffectorVoltage(2)),
-                new WaitCommand(2)),
-            Commands.runOnce(() -> m_Arm.setEndEffectorVoltage(0)),
-            Commands.run(() -> m_Arm.setPivotAngle(Arm.flipAngle(angle))));
+        setScorer(height, HOME_ANGLE),
+        Commands.runOnce(() -> m_Arm.setEndEffectorVoltage(0)),
+        setScorer(height, Arm.flipAngle(angle)),
+        Commands.race(
+            Commands.run(() -> m_Arm.setPivotAngle(Arm.flipAngle(angle))),
+            Commands.run(() -> m_Arm.setEndEffectorVoltage(2)),
+            new WaitCommand(2)),
+        Commands.runOnce(() -> m_Arm.setEndEffectorVoltage(0)),
+        Commands.run(() -> m_Arm.setPivotAngle(Arm.flipAngle(angle))));
 
     return runEnd(
         () -> ret.schedule(),
@@ -88,6 +88,13 @@ public class ScoringScheduler extends SubsystemBase {
     return run(() -> m_Arm.setPivotAngle(Arm.flipAngle(angle)));
   }
 
+  public Command holdPosition(double height, double angle) {
+    return run(() -> {
+      m_Arm.setPivotAngle(Arm.flipAngle(angle));
+      m_Elevator.setElevatorPosition(height);
+    });
+  }
+
   public Command autoScoreSetpoint(double height, double angle) {
     return Commands.sequence(
         setScorer(height, HOME_ANGLE),
@@ -102,16 +109,16 @@ public class ScoringScheduler extends SubsystemBase {
   public Command loadStationIntake() {
     Command ret =
         Commands.sequence(
-            setScorer(INTAKE_HEIGHT_IN, HOME_ANGLE),
-            setScorer(INTAKE_HEIGHT_IN, INTAKE_ANGLE),
-            Commands.race(
-                Commands.run(() -> m_Arm.setPivotAngle(INTAKE_ANGLE)),
-                Commands.run(() -> m_Arm.setEndEffectorVoltage(-2)),
-                Commands.waitUntil(() -> Math.abs(m_Arm.getEndEffectorRPS()) > 9.0)),
-            Commands.race(
-                Commands.run(() -> m_Arm.setPivotAngle(INTAKE_ANGLE)),
-                Commands.waitUntil(() -> Math.abs(m_Arm.getEndEffectorRPS()) < 8.0)),
-            Commands.run(() -> m_Arm.setEndEffectorVoltage(0)));
+        setScorer(INTAKE_HEIGHT_IN, HOME_ANGLE),
+        setScorer(INTAKE_HEIGHT_IN, INTAKE_ANGLE),
+        Commands.race(
+            Commands.run(() -> m_Arm.setPivotAngle(INTAKE_ANGLE)),
+            Commands.run(() -> m_Arm.setEndEffectorVoltage(-2)),
+            Commands.waitUntil(() -> Math.abs(m_Arm.getEndEffectorRPS()) > 9.0)),
+        Commands.race(
+            Commands.run(() -> m_Arm.setPivotAngle(INTAKE_ANGLE)),
+            Commands.waitUntil(() -> Math.abs(m_Arm.getEndEffectorRPS()) < 8.0)),
+        Commands.run(() -> m_Arm.setEndEffectorVoltage(0)));
 
     return runEnd(
         () -> ret.schedule(),
