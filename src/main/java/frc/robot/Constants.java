@@ -92,7 +92,7 @@ public final class Constants {
 
   public static class Setpoints {
     public static final double HOME_HEIGHT_IN = 1.0;
-    public static final double TRAVEL_HEIGHT = 1.0;
+    public static final double TRAVEL_HEIGHT_IN = 1.0;
     public static final double L2_HEIGHT_IN = 5.0;
     public static final double L3_HEIGHT_IN = 21.0;
     public static final double L4_HEIGHT_IN = 46.0;

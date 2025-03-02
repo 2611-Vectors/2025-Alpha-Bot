@@ -9,11 +9,15 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.MechanismSimulator;
 import frc.robot.util.MechanismSimulatorActual;
 import frc.robot.util.PhoenixUtil;
+
+import java.util.function.Supplier;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
@@ -40,24 +44,27 @@ public class Elevator extends SubsystemBase {
   }
 
   /** Sets the Elevator to a target position and should be called periodically unit are in inches */
-  public void setElevatorPosition(double target) {
-    Logger.recordOutput("Elevator/TargetPosition", target);
+  public Command setElevatorPosition(Supplier<Double> target) {
+    return run(() -> {
+      double targetActual = target.get();
+      Logger.recordOutput("Elevator/TargetPosition", targetActual);
 
-    // Simulator update
-    MechanismSimulator.updateElevator(target + 20.33);
-    if (!MechanismSimulator.isLegalTarget()) {
-      double offset = Constants.LOWEST_HEIGHT - MechanismSimulator.targetArmHeight();
-      target += offset;
-    }
-
-    double pidPart = elevatorPID.calculate(getLeftElevatorPosition(), target);
-    double ffPart = elevatorFF.calculate(target);
-
-    setVoltage(
-        MathUtil.clamp(
-            pidPart + ffPart,
-            -Constants.ELEVATOR_MAX_VOLTAGE * 0.5,
-            Constants.ELEVATOR_MAX_VOLTAGE));
+      // Simulator update
+      MechanismSimulator.updateElevator(targetActual + 20.33);
+      if (!MechanismSimulator.isLegalTarget()) {
+        double offset = Constants.LOWEST_HEIGHT - MechanismSimulator.targetArmHeight();
+        targetActual += offset;
+      }
+  
+      double pidPart = elevatorPID.calculate(getLeftElevatorPosition(), targetActual);
+      double ffPart = elevatorFF.calculate(targetActual);
+  
+      setVoltage(
+          MathUtil.clamp(
+              pidPart + ffPart,
+              -Constants.ELEVATOR_MAX_VOLTAGE * 0.5,
+              Constants.ELEVATOR_MAX_VOLTAGE));
+    });
   }
 
   /**

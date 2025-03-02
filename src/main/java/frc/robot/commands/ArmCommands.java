@@ -4,8 +4,6 @@
 
 package frc.robot.commands;
 
-import static frc.robot.Constants.Setpoints.*;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Mechanisms.Arm;
@@ -16,11 +14,7 @@ import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 public class ArmCommands {
   public static Command ArmTestCommand(Arm m_Arm) {
     LoggedNetworkNumber pivotAngle = new LoggedNetworkNumber("/Testing/PivotAngle", -90);
-    return Commands.run(
-        () -> {
-          m_Arm.setPivotAngle(pivotAngle.get());
-        },
-        m_Arm);
+    return m_Arm.setPivotAngle(() -> pivotAngle.get());
   }
 
   public static Command ArmSimpleController(
@@ -30,14 +24,5 @@ public class ArmCommands {
           m_Arm.setArmVoltage(armSupplier.get() * 4);
         },
         m_Arm);
-  }
-
-  public static Command EndEffectorController(Arm m_Arm, Supplier<Double> endEffectorSupplier) {
-    return Commands.run(() -> m_Arm.setEndEffectorVoltage(endEffectorSupplier.get() * 4), m_Arm);
-  }
-
-  public static Command waitUntilArmAngle(Arm m_Arm, double angle) {
-    return Commands.waitUntil(
-        () -> Math.abs(Arm.getRelativeAngle(angle, m_Arm.getPivotAngle())) < ANGLE_TOLERANCE);
   }
 }

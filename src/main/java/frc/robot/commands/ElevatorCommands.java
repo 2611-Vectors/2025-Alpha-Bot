@@ -4,8 +4,6 @@
 
 package frc.robot.commands;
 
-import static frc.robot.Constants.Setpoints.*;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Mechanisms.Elevator;
@@ -15,13 +13,8 @@ import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 /** Add your docs here. */
 public class ElevatorCommands {
   public static Command ElevatorTestCommand(Elevator m_Elevator) {
-    LoggedNetworkNumber elevatorPosition =
-        new LoggedNetworkNumber("/Testing/ElevatorPosition", 0.0);
-    return Commands.run(
-        () -> {
-          m_Elevator.setElevatorPosition(elevatorPosition.get());
-        },
-        m_Elevator);
+    LoggedNetworkNumber elevatorPosition = new LoggedNetworkNumber("/Testing/ElevatorPosition", 0.0);
+    return m_Elevator.setElevatorPosition(() -> elevatorPosition.get());
   }
 
   public static Command ElevatorVoltageControl(Elevator m_Elevator, Supplier<Double> voltage) {
@@ -40,10 +33,5 @@ public class ElevatorCommands {
           m_Elevator.setVoltage(voltage.get());
         },
         m_Elevator);
-  }
-
-  public static Command waitUntilElevatorHeight(Elevator m_Elevator, double height) {
-    return Commands.waitUntil(
-        () -> Math.abs(height - m_Elevator.getLeftElevatorPosition()) < POSITION_TOLERANCE);
   }
 }

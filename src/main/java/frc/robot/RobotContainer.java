@@ -28,9 +28,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.Autons.Left3Auton;
+import frc.robot.commands.ScoringCommands.LoadStationIntake;
+import frc.robot.commands.ScoringCommands.ScoreSetpoint;
+import frc.robot.commands.ScoringCommands.TravelPosition;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.ActionHandlers.ScoringScheduler;
 import frc.robot.subsystems.Mechanisms.Arm;
 import frc.robot.subsystems.Mechanisms.Climb;
 import frc.robot.subsystems.Mechanisms.Elevator;
@@ -60,9 +62,6 @@ public class RobotContainer {
   private final Elevator m_Elevator;
   private final Arm m_Arm;
   private final Climb m_Climb;
-
-  // Subsystem Schedulers
-  private final ScoringScheduler m_ScoringScheduler;
 
   // We don't plan on using these 2 for first comp
   // private final Intake m_Intake;
@@ -148,8 +147,6 @@ public class RobotContainer {
     m_Arm = new Arm();
     m_Climb = new Climb();
 
-    m_ScoringScheduler = new ScoringScheduler(m_Elevator, m_Arm);
-
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -222,19 +219,30 @@ public class RobotContainer {
     // Commands.either(slewrateCommand, normalDriveCommands, () ->
     // m_Elevator.getLeftElevatorPosition() > 8);
 
-    buttonBoard
-        .leftBumper()
+    buttonBoard.leftBumper()
         .whileTrue(Commands.defer(() -> drive.AlignReef(LEFT_OFFSET), Set.of(drive)));
-    buttonBoard
-        .rightBumper()
+    buttonBoard.rightBumper()
         .whileTrue(Commands.defer(() -> drive.AlignReef(RIGHT_OFFSET), Set.of(drive)));
 
-    m_ScoringScheduler.setDefaultCommand(m_ScoringScheduler.travelPosition());
-    buttonBoard.a().whileTrue(m_ScoringScheduler.scoreSetpoint(L2_HEIGHT_IN, L2_ANGLE));
-    buttonBoard.x().whileTrue(m_ScoringScheduler.scoreSetpoint(L2_HEIGHT_IN, L2_ANGLE));
-    buttonBoard.b().whileTrue(m_ScoringScheduler.scoreSetpoint(L3_HEIGHT_IN, L3_ANGLE));
-    buttonBoard.y().whileTrue(m_ScoringScheduler.scoreSetpoint(L4_HEIGHT_IN, L4_ANGLE));
-    buttonBoard.leftStick().whileTrue(m_ScoringScheduler.loadStationIntake());
+    buttonBoard.a()
+        .whileTrue(new ScoreSetpoint(m_Elevator, m_Arm, L2_HEIGHT_IN, L2_ANGLE))
+        .onFalse(new TravelPosition(m_Elevator, m_Arm));
+
+    buttonBoard.x()
+        .whileTrue(new ScoreSetpoint(m_Elevator, m_Arm, L2_HEIGHT_IN, L2_ANGLE))
+        .onFalse(new TravelPosition(m_Elevator, m_Arm));
+
+    buttonBoard.b()
+        .whileTrue(new ScoreSetpoint(m_Elevator, m_Arm, L3_HEIGHT_IN, L3_ANGLE))
+        .onFalse(new TravelPosition(m_Elevator, m_Arm));
+
+    buttonBoard.y()
+        .whileTrue(new ScoreSetpoint(m_Elevator, m_Arm, L4_HEIGHT_IN, L4_ANGLE))
+        .onFalse(new TravelPosition(m_Elevator, m_Arm));
+
+    buttonBoard.leftStick()
+        .whileTrue(new LoadStationIntake(m_Elevator, m_Arm))
+        .onFalse(new TravelPosition(m_Elevator, m_Arm));
 
     // Lock to 0° when A button is held
     controller
@@ -272,6 +280,6 @@ public class RobotContainer {
     drive.setPose(CustomAutoBuilder.getStartPose2d());
     // return CustomAutoBuilder.getAutonCommand(drive);
     // return autoChooser.get();
-    return new Left3Auton(m_ScoringScheduler);
+    return new Left3Auton(m_Elevator, m_Arm);
   }
 }

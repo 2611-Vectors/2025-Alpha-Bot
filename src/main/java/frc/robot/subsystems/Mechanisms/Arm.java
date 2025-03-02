@@ -8,12 +8,18 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.MechanismSimulator;
 import frc.robot.util.MechanismSimulatorActual;
 import frc.robot.util.PhoenixUtil;
 import frc.robot.util.TunablePIDController;
+
+import static frc.robot.Constants.Setpoints.HOME_ANGLE;
+
+import java.util.function.Supplier;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Arm extends SubsystemBase {
@@ -35,8 +41,8 @@ public class Arm extends SubsystemBase {
     arm.setVoltage(voltage);
   }
 
-  public void setEndEffectorVoltage(double voltage) {
-    endEffector.setVoltage(voltage);
+  public Command setEndEffectorVoltage(Supplier<Double> voltage) {
+    return runOnce(() -> endEffector.setVoltage(voltage.get()));
   }
 
   /**
@@ -77,18 +83,22 @@ public class Arm extends SubsystemBase {
   /**
    * Sets the Arm Pivot to a target position and should be called periodically unit are in degrees
    */
-  public void setPivotAngle(double angle) {
-    Logger.recordOutput("Arm/TargetAngle", angle);
+  public Command setPivotAngle(Supplier<Double> angle) {
+    return run(() -> {
+      Logger.recordOutput("Arm/TargetAngle", angle.get());
+      MechanismSimulator.updateArm(angle.get());
 
-    MechanismSimulator.updateArm(angle);
-    if (!MechanismSimulator.isLegalTarget()) {
-      angle = Constants.Setpoints.HOME_ANGLE;
-    }
-
-    double pidPart = armPID.calculate(getPivotAngle(), angle);
-    double ffPart = 0;
-    arm.setVoltage(
-        MathUtil.clamp(pidPart + ffPart, -Constants.ARM_MAX_VOLTAGE, Constants.ARM_MAX_VOLTAGE));
+      double pidPart;
+      if (!MechanismSimulator.isLegalTarget()) {
+        pidPart = armPID.calculate(getPivotAngle(), HOME_ANGLE);
+      } else {
+        pidPart = armPID.calculate(getPivotAngle(), angle.get());
+      }
+      
+      double ffPart = 0;
+      arm.setVoltage(
+          MathUtil.clamp(pidPart + ffPart, -Constants.ARM_MAX_VOLTAGE, Constants.ARM_MAX_VOLTAGE));
+    });
   }
 
   public double getEndEffectorRPS() {
