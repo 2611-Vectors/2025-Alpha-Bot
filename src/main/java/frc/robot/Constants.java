@@ -60,7 +60,7 @@ public final class Constants {
   // Conversion factor from motor rotations to inches of travel
   public static final double ROTATIONS_TO_INCHES =
       (Math.PI * STRING_HOUSING_DIAMETER) / ELEVATOR_GEAR_RATIO;
-  public static final double STARTING_HEIGHT = 2;
+  public static final double STARTING_HEIGHT = 0;
   // Transition Code
   public static final int TRANSITION_ID = 31;
 
@@ -80,7 +80,7 @@ public final class Constants {
   public static final int PIVOT_ANGLE_OFFSET = -90;
 
   public static final double ARM_GEAR_RATIO = 43.95;
-  public static final double ARM_MAX_VOLTAGE = 1.0; // Set this to 8 for competition
+  public static final double ARM_MAX_VOLTAGE = 2.0; // Set this to 8 for competition
   public static final double ARM_LENGTH = 0.6;
   public static final double LOWEST_HEIGHT = 0.3;
 
@@ -93,17 +93,17 @@ public final class Constants {
   public static class Setpoints {
     public static final double HOME_HEIGHT_IN = 1.0;
     public static final double TRAVEL_HEIGHT = 1.0;
-    public static final double L2_HEIGHT_IN = 7.0;
+    public static final double L2_HEIGHT_IN = 5.0;
     public static final double L3_HEIGHT_IN = 21.0;
     public static final double L4_HEIGHT_IN = 46.0;
-    public static final double INTAKE_HEIGHT_IN = 28.25;
+    public static final double INTAKE_HEIGHT_IN = 38;
 
     public static final double HOME_ANGLE = -90;
     public static final double TRAVEL_ANGLE = -90;
     public static final double L2_ANGLE = -55;
     public static final double L3_ANGLE = -55;
     public static final double L4_ANGLE = -55;
-    public static final double INTAKE_ANGLE = 45.0;
+    public static final double INTAKE_ANGLE = 69.1;
 
     // 19 inches tall
 
@@ -130,7 +130,7 @@ public final class Constants {
     public static final double LEFT_OFFSET = 0.21; // In Meters
     public static final double RIGHT_OFFSET = -0.13; // In Meters
 
-    public static final Pose2d R1 = new Pose2d(1.13847, 7.10903, Rotation2d.fromDegrees(-60));
+    public static final Pose2d R1 = new Pose2d(1.13847, 7.10903, Rotation2d.fromDegrees(120));
     public static final Pose2d R0 = new Pose2d(1.13847, .94297, Rotation2d.fromDegrees(60));
 
     public static final Map<Pose2d, Double> poseAngleMap = new HashMap<>();

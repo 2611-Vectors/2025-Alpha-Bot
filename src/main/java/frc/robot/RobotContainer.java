@@ -27,9 +27,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.VisionConstants;
-import frc.robot.commands.AlignReef;
-import frc.robot.commands.DriveCommands;
 import frc.robot.commands.Autons.Left3Auton;
+import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.ActionHandlers.ScoringScheduler;
 import frc.robot.subsystems.Mechanisms.Arm;
@@ -46,6 +45,7 @@ import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.CustomAutoBuilder;
+import java.util.Set;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -68,7 +68,7 @@ public class RobotContainer {
   // private final Intake m_Intake;
   // private final Transition m_Transition;
 
-    private final Vision m_Vision;
+  private final Vision m_Vision;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -112,11 +112,12 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
         m_Vision =
-        new Vision(
-            drive::addVisionMeasurement, new VisionIOPhotonVisionSim(
-                VisionConstants.BackRightCam,
-                VisionConstants.robotToBackRightCam,
-                drive::getPose));
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.BackRightCam,
+                    VisionConstants.robotToBackRightCam,
+                    drive::getPose));
         // new VisionIOPhotonVisionSim(
         //     VisionConstants.FrontRightCam,
         //     VisionConstants.robotToFrontRightCam,
@@ -221,8 +222,12 @@ public class RobotContainer {
     // Commands.either(slewrateCommand, normalDriveCommands, () ->
     // m_Elevator.getLeftElevatorPosition() > 8);
 
-    buttonBoard.leftBumper().whileTrue(new AlignReef(drive, LEFT_OFFSET));
-    buttonBoard.rightBumper().whileTrue(new AlignReef(drive, RIGHT_OFFSET));
+    buttonBoard
+        .leftBumper()
+        .whileTrue(Commands.defer(() -> drive.AlignReef(LEFT_OFFSET), Set.of(drive)));
+    buttonBoard
+        .rightBumper()
+        .whileTrue(Commands.defer(() -> drive.AlignReef(RIGHT_OFFSET), Set.of(drive)));
 
     m_ScoringScheduler.setDefaultCommand(m_ScoringScheduler.travelPosition());
     buttonBoard.a().whileTrue(m_ScoringScheduler.scoreSetpoint(L2_HEIGHT_IN, L2_ANGLE));
@@ -267,6 +272,6 @@ public class RobotContainer {
     drive.setPose(CustomAutoBuilder.getStartPose2d());
     // return CustomAutoBuilder.getAutonCommand(drive);
     // return autoChooser.get();
-    return new Left3Auton(m_Elevator, m_Arm);
+    return new Left3Auton(m_ScoringScheduler);
   }
 }

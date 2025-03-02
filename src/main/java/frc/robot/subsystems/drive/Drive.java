@@ -45,13 +45,17 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.util.CustomAutoBuilder;
 import frc.robot.util.Friction;
 import frc.robot.util.LocalADStarAK;
+import frc.robot.util.TunablePIDController;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -390,6 +394,47 @@ public class Drive extends SubsystemBase {
       Matrix<N3, N1> visionMeasurementStdDevs) {
     poseEstimator.addVisionMeasurement(
         visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+  }
+
+  TunablePIDController drivePID_X = new TunablePIDController(0.7, 0, 0, "/tuning/driveX/");
+  TunablePIDController drivePID_Y = new TunablePIDController(0.7, 0, 0, "tuning/driveY/");
+
+  private Pose2d getClosestPoint() {
+    Pose2d closestPoint = new Pose2d();
+    double closestDistance = Double.MAX_VALUE;
+    for (Pose2d position : Constants.AutonConstants.poseAngleMap.keySet()) {
+      double dist = position.getTranslation().getDistance(getPose().getTranslation());
+      if (dist < closestDistance) {
+        closestDistance = dist;
+        closestPoint = position;
+      }
+    }
+
+    return closestPoint;
+  }
+
+  public Command AlignReef(double reefSide) {
+    Pose2d closestPoint = getClosestPoint();
+    Pose2d targetPos = CustomAutoBuilder.applyOffset(closestPoint, reefSide);
+
+    return Commands.parallel(
+            Commands.run(
+                () -> {
+                  drivePID_X.update();
+                  drivePID_Y.update();
+                  Logger.recordOutput("/targetPosition", targetPos);
+                }),
+            DriveCommands.joystickDriveAtAngle(
+                this,
+                () ->
+                    MathUtil.clamp(
+                        drivePID_X.calculate(getPose().getX(), targetPos.getX()), -.5, .5),
+                () ->
+                    MathUtil.clamp(
+                        drivePID_Y.calculate(getPose().getY(), targetPos.getY()), -.5, .5),
+                () -> closestPoint.getRotation()))
+        .finallyDo(
+            () -> DriveCommands.reefDrive(this, () -> 0, () -> 0, () -> getRotation()).schedule());
   }
 
   /** Returns the maximum linear speed in meters per sec. */

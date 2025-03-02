@@ -66,19 +66,59 @@ public class ScoringScheduler extends SubsystemBase {
         });
   }
 
+  public Command autoLoadStationIntake() {
+    return Commands.sequence(
+        setScorer(INTAKE_HEIGHT_IN, HOME_ANGLE),
+        setScorer(INTAKE_HEIGHT_IN, INTAKE_ANGLE),
+        Commands.race(
+            Commands.run(() -> m_Arm.setPivotAngle(INTAKE_ANGLE)),
+            Commands.run(() -> m_Arm.setEndEffectorVoltage(-2)),
+            Commands.waitUntil(() -> Math.abs(m_Arm.getEndEffectorRPS()) > 9.0)),
+        Commands.race(
+            Commands.run(() -> m_Arm.setPivotAngle(INTAKE_ANGLE)),
+            Commands.waitUntil(() -> Math.abs(m_Arm.getEndEffectorRPS()) < 8.0)),
+        Commands.runOnce(() -> m_Arm.setEndEffectorVoltage(0)));
+  }
+
+  public Command autoTravelPosition() {
+    return setScorer(TRAVEL_HEIGHT, TRAVEL_ANGLE);
+  }
+
+  public Command holdArmPos(double angle) {
+    return run(() -> m_Arm.setPivotAngle(Arm.flipAngle(angle)));
+  }
+
+  public Command autoScoreSetpoint(double height, double angle) {
+    return Commands.sequence(
+        setScorer(height, HOME_ANGLE),
+        setScorer(height, Arm.flipAngle(angle)),
+        Commands.race(
+            Commands.run(() -> m_Arm.setPivotAngle(Arm.flipAngle(angle))),
+            Commands.run(() -> m_Arm.setEndEffectorVoltage(2)),
+            new WaitCommand(2)),
+        Commands.runOnce(() -> m_Arm.setEndEffectorVoltage(0)));
+  }
+
   public Command loadStationIntake() {
     Command ret =
         Commands.sequence(
             setScorer(INTAKE_HEIGHT_IN, HOME_ANGLE),
             setScorer(INTAKE_HEIGHT_IN, INTAKE_ANGLE),
             Commands.race(
-                Commands.run(() -> m_Arm.setEndEffectorVoltage(2)),
-                Commands.waitUntil(() -> Math.abs(m_Arm.getEndEffectorRPS()) > 13.0)),
+                Commands.run(() -> m_Arm.setPivotAngle(INTAKE_ANGLE)),
+                Commands.run(() -> m_Arm.setEndEffectorVoltage(-2)),
+                Commands.waitUntil(() -> Math.abs(m_Arm.getEndEffectorRPS()) > 9.0)),
             Commands.race(
-                Commands.run(() -> m_Arm.setEndEffectorVoltage(2)),
-                Commands.waitUntil(() -> Math.abs(m_Arm.getEndEffectorRPS()) < 13.0)));
+                Commands.run(() -> m_Arm.setPivotAngle(INTAKE_ANGLE)),
+                Commands.waitUntil(() -> Math.abs(m_Arm.getEndEffectorRPS()) < 8.0)),
+            Commands.run(() -> m_Arm.setEndEffectorVoltage(0)));
 
-    return runEnd(() -> ret.schedule(), () -> ret.cancel());
+    return runEnd(
+        () -> ret.schedule(),
+        () -> {
+          ret.cancel();
+          m_Arm.setEndEffectorVoltage(0);
+        });
   }
 
   public Command travelPosition() {
