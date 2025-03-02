@@ -27,8 +27,17 @@ public class ScoringScheduler extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {}
+  public void periodic() {
+  }
 
+  /**
+   * Creates a command to set the elevator to a height and then arm to an angle
+   * finishes when done
+   *
+   * @param height The target height for the elevator.
+   * @param angle  The target pivot angle for the arm.
+   * @return A sequential command to position the arm and elevator.
+   */
   public Command setScorer(double height, double angle) {
     return Commands.sequence(
         Commands.race(
@@ -45,9 +54,18 @@ public class ScoringScheduler extends SubsystemBase {
             }));
   }
 
+  /**
+   * Creates a command to perform a scoring sequance based off a setpoint does not
+   * finish
+   *
+   * @param height The target height for scoring.
+   * @param angle  The target pivot angle for scoring.
+   * @return A command that handles the full scoring process, including end
+   *         effector control.
+   */
+
   public Command scoreSetpoint(double height, double angle) {
-    Command ret =
-        Commands.sequence(
+    Command ret = Commands.sequence(
         setScorer(height, HOME_ANGLE),
         Commands.runOnce(() -> m_Arm.setEndEffectorVoltage(0)),
         setScorer(height, Arm.flipAngle(angle)),
@@ -88,6 +106,14 @@ public class ScoringScheduler extends SubsystemBase {
     return run(() -> m_Arm.setPivotAngle(Arm.flipAngle(angle)));
   }
 
+  /**
+   * Holds both the arm and elevator at specified positions.
+   *
+   * @param height The target height for the elevator.
+   * @param angle  The target angle for the arm.
+   * @return A command that maintains the arm and elevator positions.
+   */
+
   public Command holdPosition(double height, double angle) {
     return run(() -> {
       m_Arm.setPivotAngle(Arm.flipAngle(angle));
@@ -106,9 +132,13 @@ public class ScoringScheduler extends SubsystemBase {
         Commands.runOnce(() -> m_Arm.setEndEffectorVoltage(0)));
   }
 
+  /**
+   * Set scorer to intake position then waits for coral to be loaded
+   *
+   * @return A command that manages the intake process 
+   */
   public Command loadStationIntake() {
-    Command ret =
-        Commands.sequence(
+    Command ret = Commands.sequence(
         setScorer(INTAKE_HEIGHT_IN, HOME_ANGLE),
         setScorer(INTAKE_HEIGHT_IN, INTAKE_ANGLE),
         Commands.race(
